@@ -40,7 +40,7 @@ their Android devices.
   * Check if your phone is connected properly using `adb devices`.
   * You will see a unique ID of your phone and the text `recovery` after it.
 * Now to backup your data use the `adb pull` command:
-    ``adb push <source-path> <target-path>``
+    ``adb pull <source-path> <target-path>``
 
 I found this nice [article](http://www.droidviews.com/push-pull-files-android-using-adb-commands/ "adb pull")
 explaining the use case of `adb pull` command.
