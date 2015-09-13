@@ -87,7 +87,7 @@ twitter_user: meumangarora
 twitter_tweet_button: true
 
 # Google +1
-google_plus_one: false
+google_plus_one: true
 google_plus_one_size: medium
 
 # Google Plus Profile
@@ -112,3 +112,6 @@ google_analytics_tracking_id: UA-67547313-1
 
 # Facebook Like
 facebook_like: true
+
+# LinkedIn
+linkedin_user: meumangarora
