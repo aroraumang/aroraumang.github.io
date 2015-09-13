@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Android | Umang Arora]]></title>
   <link href="http://aroraumang.github.io/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://aroraumang.github.io/"/>
-  <updated>2015-09-13T22:00:40+05:30</updated>
+  <updated>2015-09-13T22:18:32+05:30</updated>
   <id>http://aroraumang.github.io/</id>
   <author>
     <name><![CDATA[Umang Arora]]></name>
@@ -58,7 +58,7 @@ their Android devices.</p>
     </ul>
   </li>
   <li>Now to backup your data use the <code>adb pull</code> command:
-  <code>adb push &lt;source-path&gt; &lt;target-path&gt;</code></li>
+  <code>adb pull &lt;source-path&gt; &lt;target-path&gt;</code></li>
 </ul>
 
 <p>I found this nice <a href="http://www.droidviews.com/push-pull-files-android-using-adb-commands/" title="adb pull">article</a>
