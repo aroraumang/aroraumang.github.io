@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Samsung | Umang Arora]]></title>
   <link href="http://aroraumang.github.io/blog/categories/samsung/atom.xml" rel="self"/>
   <link href="http://aroraumang.github.io/"/>
-  <updated>2015-09-14T10:51:50+05:30</updated>
+  <updated>2015-09-16T19:16:14+05:30</updated>
   <id>http://aroraumang.github.io/</id>
   <author>
     <name><![CDATA[Umang Arora]]></name>
@@ -27,8 +27,11 @@ The screen was completely dead, even the touch was not working.</p>
 able to connect the phone in
 <a href="https://en.wikipedia.org/wiki/Media_Transfer_Protocol" title="Media Transfer Protocol">MTP</a>
 mode, and <a href="http://developer.android.com/tools/help/adb.html" title="Android Debug Bridge">ADB</a>
-showed the device as <code>unauthorized</code>.
-At this point I was wondering why I didn’t backup everything before, it was frustrating.</p>
+showed the device as <code>unauthorized</code>.</p>
+
+<p><img class="left" src="/images/adb/adb_unauthorized.png" title="ADB Unauthorized" ></p>
+
+<p>At this point I was wondering why I didn’t backup everything before, it was frustrating.</p>
 
 <p>After hours of searching through the web, I found a few solutions, but none of them
 were helpful as</p>
@@ -61,13 +64,15 @@ their Android devices.</p>
   <code>adb pull &lt;source-path&gt; &lt;target-path&gt;</code></li>
 </ul>
 
+<p><img class="left" src="/images/adb/adb_pull.png" title="ADB Pull" ></p>
+
 <p>I found this nice <a href="http://www.droidviews.com/push-pull-files-android-using-adb-commands/" title="adb pull">article</a>
 explaining the use case of <code>adb pull</code> command.</p>
 
 <p>So, to sum it all up, if you can somehow install custom recovery on your phone,
 you can save all your shit.</p>
 
-<p>PS: Screenshots coming soon.</p>
+<p>May the force be with you!</p>
 
 ]]></content>
   </entry>
