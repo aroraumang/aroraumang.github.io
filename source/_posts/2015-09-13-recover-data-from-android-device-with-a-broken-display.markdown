@@ -16,6 +16,9 @@ able to connect the phone in
 [MTP](https://en.wikipedia.org/wiki/Media_Transfer_Protocol "Media Transfer Protocol")
 mode, and [ADB](http://developer.android.com/tools/help/adb.html "Android Debug Bridge")
 showed the device as `unauthorized`.
+
+{% img left /images/adb/adb_unauthorized.png ADB Unauthorized %}
+
 At this point I was wondering why I didn't backup everything before, it was frustrating.
 
 After hours of searching through the web, I found a few solutions, but none of them
@@ -42,11 +45,13 @@ their Android devices.
 * Now to backup your data use the `adb pull` command:
     ``adb pull <source-path> <target-path>``
 
+{% img left /images/adb/adb_pull.png ADB Pull %}
+
 I found this nice [article](http://www.droidviews.com/push-pull-files-android-using-adb-commands/ "adb pull")
 explaining the use case of `adb pull` command.
 
 So, to sum it all up, if you can somehow install custom recovery on your phone,
 you can save all your shit.
 
-PS: Screenshots coming soon.
+May the force be with you!
 
