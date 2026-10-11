@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>http://aroraumang.github.io/blog/2015/09/13/recover-data-from-android-device-with-a-broken-display/</loc>
-    <lastmod>2015-09-13T19:25:20+05:30</lastmod>
-  </url>
-  <url>
-    <loc>http://aroraumang.github.io/blog/archives/</loc>
-  </url>
-  <url>
-    <loc>http://aroraumang.github.io/</loc>
-  </url>
-  <url>
-    <loc>http://aroraumang.github.io/blog/categories/android/</loc>
-  </url>
-  <url>
-    <loc>http://aroraumang.github.io/blog/categories/samsung/</loc>
-  </url>
-  <url>
-    <loc>http://aroraumang.github.io/blog/categories/galaxy-note-ii/</loc>
-  </url>
-  <url>
-    <loc>http://aroraumang.github.io/blog/categories/recover-data/</loc>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://umangarora.com/</loc></url>
+  <url><loc>https://umangarora.com/paisolog/</loc></url>
+  <url><loc>https://umangarora.com/paisolog/privacy/</loc></url>
+  <url><loc>https://umangarora.com/paisolog/support/</loc></url>
 </urlset>

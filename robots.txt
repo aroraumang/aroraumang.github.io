@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: 
+Allow: /
 
-Sitemap: http://aroraumang.github.io/sitemap.xml 
+Sitemap: https://umangarora.com/sitemap.xml

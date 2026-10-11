@@ -1,0 +1,5 @@
+# GitHub Pages runs Jekyll over this branch. The pages are already built
+# (see build.mjs), so this only keeps the build files out of the published site.
+exclude:
+  - build.mjs
+  - README.md
