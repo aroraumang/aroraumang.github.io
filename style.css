@@ -773,8 +773,8 @@ strong {
 
 /* The dog, drawn after Umang's: white with golden-tan patches, big upright
    ears, a tan face with a white muzzle and a curly white tail. dog.js sets
-   data-mood from the visitor's clock. Playful: she trots along the bottom of
-   the page. Sleepy: she naps belly-up in the corner, paws in the air. Without motion, both
+   data-mood from the visitor's clock. Playful: dog.js walks her around the
+   bottom of the page. Sleepy: she naps belly-up in the corner, paws in the air. Without motion, both
    poses hold still. */
 .dog {
   position: absolute;
@@ -796,7 +796,7 @@ strong {
 }
 
 .dog[data-mood="playful"] .pose-sleep,
-.dog[data-mood="sleepy"] .dog-hop {
+.dog[data-mood="sleepy"] .pose-walk {
   display: none;
 }
 
@@ -888,6 +888,34 @@ strong {
   stroke-width: 6;
 }
 
+.dog .limb-line.thigh {
+  stroke-width: 11;
+}
+
+.dog .limb-fill.thigh,
+.dog .limb-far.thigh {
+  stroke-width: 7.5;
+}
+
+.dog .paw-line {
+  fill: var(--dog-line);
+}
+
+.dog .paw-fill {
+  fill: var(--dog-fur);
+}
+
+.dog .paw-fill.far-fill {
+  fill: var(--dog-far);
+}
+
+/* dog.js walks her around by moving her along the stage. */
+.dog.is-walking {
+  right: auto;
+  left: 0;
+  will-change: transform;
+}
+
 .dog .belly {
   fill: #f1cfc8;
 }
@@ -925,23 +953,12 @@ strong {
   }
 }
 
-.dog .leg,
-.dog .tail,
-.dog .trunk,
-.dog .head,
 .dog .paw-twitch,
 .dog .zzz text {
   transform-box: view-box;
 }
 
 .paw-twitch { transform-origin: 85px 70px; }
-
-.leg-bf { transform-origin: 47px 56px; }
-.leg-bn { transform-origin: 53px 56px; }
-.leg-ff { transform-origin: 94px 56px; }
-.leg-fn { transform-origin: 100px 56px; }
-.pose-trot .tail { transform-origin: 39px 44px; }
-.pose-trot .head { transform-origin: 104px 24px; }
 
 .dog .breathe {
   transform-box: fill-box;
@@ -1367,51 +1384,6 @@ strong {
     animation-duration: 30s;
   }
 
-  .dog[data-mood="playful"] {
-    right: auto;
-    left: 0;
-    animation: trot-across 28s linear infinite;
-  }
-
-  /* Keep the trot near the same speed on any screen, so the legs match. */
-  @media (max-width: 34rem) {
-    .dog[data-mood="playful"] {
-      animation-duration: 14s;
-    }
-  }
-
-  @media (min-width: 90rem) {
-    .dog[data-mood="playful"] {
-      animation-duration: 36s;
-    }
-  }
-
-  .dog-hop {
-    animation: hop 5.5s ease-in-out infinite;
-  }
-
-  .leg-bf,
-  .leg-fn {
-    animation: step 0.42s ease-in-out infinite alternate;
-  }
-
-  .leg-bn,
-  .leg-ff {
-    animation: step 0.42s ease-in-out -0.42s infinite alternate-reverse;
-  }
-
-  .pose-trot .trunk {
-    animation: bob 0.21s ease-in-out infinite alternate;
-  }
-
-  .pose-trot .head {
-    animation: nod 0.42s ease-in-out infinite alternate;
-  }
-
-  .pose-trot .tail {
-    animation: wag 0.28s ease-in-out infinite alternate;
-  }
-
   .dog .breathe {
     animation: breathe 3.6s ease-in-out infinite alternate;
   }
@@ -1517,76 +1489,6 @@ strong {
 @keyframes drift {
   to {
     transform: translate(8vmax, 6vmax) scale(1.15);
-  }
-}
-
-/* Across to the right, turn round off-screen, and back again. */
-@keyframes trot-across {
-  0% {
-    transform: translateX(-140px) scaleX(1);
-  }
-  46% {
-    transform: translateX(calc(100vw + 20px)) scaleX(1);
-  }
-  50% {
-    transform: translateX(calc(100vw + 20px)) scaleX(-1);
-  }
-  96% {
-    transform: translateX(-140px) scaleX(-1);
-  }
-  100% {
-    transform: translateX(-140px) scaleX(1);
-  }
-}
-
-@keyframes step {
-  from {
-    transform: rotate(-24deg);
-  }
-  to {
-    transform: rotate(24deg);
-  }
-}
-
-@keyframes bob {
-  to {
-    transform: translateY(-1.5px);
-  }
-}
-
-@keyframes nod {
-  to {
-    transform: rotate(-4deg);
-  }
-}
-
-@keyframes wag {
-  from {
-    transform: rotate(-18deg);
-  }
-  to {
-    transform: rotate(22deg);
-  }
-}
-
-/* A happy little bounce every few seconds while she trots. */
-@keyframes hop {
-  0%,
-  62%,
-  100% {
-    transform: translateY(0);
-  }
-  68% {
-    transform: translateY(-16px);
-  }
-  74% {
-    transform: translateY(0);
-  }
-  78% {
-    transform: translateY(-6px);
-  }
-  82% {
-    transform: translateY(0);
   }
 }
 
