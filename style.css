@@ -774,7 +774,7 @@ strong {
 /* The dog, drawn after Umang's: white with golden-tan patches, big upright
    ears, a tan face with a white muzzle and a curly white tail. dog.js sets
    data-mood from the visitor's clock. Playful: she trots along the bottom of
-   the page. Sleepy: she's curled up in the corner. Without motion, both
+   the page. Sleepy: she naps belly-up in the corner, paws in the air. Without motion, both
    poses hold still. */
 .dog {
   position: absolute;
@@ -865,6 +865,33 @@ strong {
   stroke-linejoin: round;
 }
 
+.dog .limb-line,
+.dog .limb-fill,
+.dog .limb-far {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dog .limb-line {
+  stroke: var(--dog-line);
+  stroke-width: 9.5;
+}
+
+.dog .limb-fill {
+  stroke: var(--dog-fur);
+  stroke-width: 6;
+}
+
+.dog .limb-far {
+  stroke: var(--dog-far);
+  stroke-width: 6;
+}
+
+.dog .belly {
+  fill: #f1cfc8;
+}
+
 .dog .tail-line {
   stroke: var(--dog-line);
   stroke-width: 10;
@@ -902,9 +929,12 @@ strong {
 .dog .tail,
 .dog .trunk,
 .dog .head,
+.dog .paw-twitch,
 .dog .zzz text {
   transform-box: view-box;
 }
+
+.paw-twitch { transform-origin: 85px 63px; }
 
 .leg-bf { transform-origin: 47px 56px; }
 .leg-bn { transform-origin: 53px 56px; }
@@ -1386,6 +1416,10 @@ strong {
     animation: breathe 3.6s ease-in-out infinite alternate;
   }
 
+  .dog .paw-twitch {
+    animation: dream 7s ease-in-out infinite;
+  }
+
   .dog .zzz text {
     animation: snooze 3.6s ease-out infinite both;
   }
@@ -1559,6 +1593,27 @@ strong {
 @keyframes breathe {
   to {
     transform: scale(1.015, 1.05);
+  }
+}
+
+/* Every so often a front paw twitches, as if she's dreaming. */
+@keyframes dream {
+  0%,
+  76%,
+  100% {
+    transform: rotate(0);
+  }
+  80% {
+    transform: rotate(-12deg);
+  }
+  84% {
+    transform: rotate(4deg);
+  }
+  88% {
+    transform: rotate(-8deg);
+  }
+  92% {
+    transform: rotate(0);
   }
 }
 

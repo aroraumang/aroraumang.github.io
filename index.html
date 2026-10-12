@@ -12,7 +12,7 @@
 <meta name="description" content="May the force be with you. Umang Arora's personal site and apps.">
 <link rel="canonical" href="https://umangarora.com/">
 <link rel="icon" href="/favicon.svg">
-<link rel="stylesheet" href="/style.css?v=8806eb78">
+<link rel="stylesheet" href="/style.css?v=827287bd">
 <script src="/dog.js?v=178043ac" defer></script>
 </head>
 <body>
@@ -79,39 +79,51 @@
 
 <svg class="pose pose-sleep" viewBox="0 -16 140 112" width="140" height="112">
 <defs>
-<path id="dog-curl" d="M22 88 C20 70 36 58 58 58 C80 58 96 66 99 80 C100 88 96 92 88 92 L30 92 C25 92 22 91 22 88 Z"/>
-<clipPath id="dog-curl-clip"><use href="#dog-curl"/></clipPath>
+<path id="dog-belly" d="M30 80 C28 66 44 58 62 58 C80 58 94 62 100 71 C104 79 100 90 90 91 L36 91 C31 91 30 86 30 80 Z"/>
+<clipPath id="dog-belly-clip"><use href="#dog-belly"/></clipPath>
 </defs>
-<ellipse class="shadow" cx="70" cy="93" rx="52" ry="3.5"/>
+<ellipse class="shadow" cx="72" cy="93" rx="56" ry="3.5"/>
+<path class="tail-line" d="M33 85 C20 89 12 82 15 72"/>
+<path class="tail-fill" d="M33 85 C20 89 12 82 15 72"/>
 <g class="breathe">
-<use class="fur o" href="#dog-curl"/>
-<g clip-path="url(#dog-curl-clip)">
-<ellipse class="tan" cx="44" cy="63" rx="19" ry="9"/>
-<circle class="tan" cx="66" cy="62" r="1.5"/>
-<circle class="tan" cx="71" cy="65" r="1.1"/>
+<path class="limb-line" d="M55 62 L57 45 L51 37"/>
+<path class="limb-far" d="M55 62 L57 45 L51 37"/>
+<path class="limb-line" d="M45 66 L39 49 L45 39"/>
+<path class="limb-fill" d="M45 66 L39 49 L45 39"/>
+<path class="limb-line" d="M93 66 L95 54 Q96 48 101 51"/>
+<path class="limb-far" d="M93 66 L95 54 Q96 48 101 51"/>
+<g class="paw-twitch">
+<path class="limb-line" d="M85 63 L85 51 Q85 45 91 47"/>
+<path class="limb-fill" d="M85 63 L85 51 Q85 45 91 47"/>
 </g>
-<ellipse class="fur o" cx="42" cy="80" rx="15" ry="10"/>
+<use class="fur o" href="#dog-belly"/>
+<g clip-path="url(#dog-belly-clip)">
+<ellipse class="belly" cx="63" cy="63" rx="15" ry="4.5"/>
+<ellipse class="tan" cx="40" cy="88" rx="12" ry="5"/>
+<circle class="tan" cx="58" cy="86" r="1.4"/>
+<circle class="tan" cx="64" cy="88" r="1.1"/>
 </g>
-<path class="tail-line" d="M26 87 C34 97 64 97 84 92"/>
-<path class="tail-fill" d="M26 87 C34 97 64 97 84 92"/>
-<rect class="far" x="82" y="84" width="36" height="8" rx="4"/>
+</g>
 <g class="head">
-<g transform="translate(100 84) scale(1.15) translate(-100 -84)">
-<path class="tan-dark o" d="M92 69 L75 61 L90 76 Z"/>
-<ellipse class="fur o" cx="100" cy="74" rx="11" ry="9"/>
-<path class="fur o" d="M104 72 C112 74 120 78 124 82 C125 85 122 86 119 86 L102 84 Z"/>
-<path class="tan" d="M90 74 C89 66 96 63 103 64 C108 65 111 69 111 73 C108 73 105 75 103 77 C99 78 94 78 91 78 Z"/>
-<path class="lid" d="M103 71 Q106.5 74 110 71"/>
-<ellipse class="nose" cx="123" cy="83" rx="2.4" ry="2"/>
-<path class="tan o" d="M96 68 L77 55 L101 63 Z"/>
-<path class="collar" d="M91 79 Q96 85 101 83"/>
+<g transform="translate(108 90) scale(1.25) translate(-108 -90)">
+<path class="collar" d="M98 69 Q102 78 99 87"/>
+<path class="tan-dark o" d="M100 85 Q91 91 94 95 Q100 95 104 90 Z"/>
+<ellipse class="fur o" cx="108" cy="80" rx="11" ry="10"/>
+<path class="fur o" d="M110 84 C118 82 126 78 130 74 C132 72 130 69 127 69 L110 72 Z"/>
+<ellipse class="fur" cx="110" cy="77" rx="6" ry="5.5"/>
+<path class="tan" d="M98 81 C98 89 106 92 113 90 C117 88 119 84 119 80 C116 81 113 80 111 77 C108 76 104 75 100 74 Z"/>
+<path class="lid" d="M111 80 Q114 83 117 80"/>
+<ellipse class="nose" cx="129" cy="71.5" rx="2.6" ry="2.2"/>
+<path class="mouth" d="M118 73 Q122 70.5 126 71.5"/>
+<path class="tongue" d="M120 72 C119 66 124.5 65.5 124 71 Z"/>
+<path class="tan o" d="M111 88 Q114 96 123 95 Q120 90 116 85.5 Z"/>
+<path class="ear-inner" d="M113 89 Q115 93.5 120 93 Q118 90 116 88 Z"/>
 </g>
 </g>
-<rect class="fur o" x="86" y="87" width="34" height="7" rx="3.5"/>
 <g class="zzz">
-<text x="112" y="58">z</text>
-<text x="119" y="47">z</text>
-<text x="127" y="35">Z</text>
+<text x="106" y="50">z</text>
+<text x="113" y="39">z</text>
+<text x="121" y="27">Z</text>
 </g>
 </svg>
 </div>
