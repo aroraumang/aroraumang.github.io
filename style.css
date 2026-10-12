@@ -934,7 +934,7 @@ strong {
   transform-box: view-box;
 }
 
-.paw-twitch { transform-origin: 85px 63px; }
+.paw-twitch { transform-origin: 85px 70px; }
 
 .leg-bf { transform-origin: 47px 56px; }
 .leg-bn { transform-origin: 53px 56px; }
