@@ -25,7 +25,7 @@ const root = path.dirname(fileURLToPath(import.meta.url));
 const SITE_URL = "https://umangarora.com";
 const SUPPORT_EMAIL = "paisolog@umangarora.com";
 const CONTACT_EMAIL = "hi@umangarora.com";
-const APPS_LIVE = false;
+const APPS_LIVE = true;
 const APP_SECTIONS = ["apps", "paisolog"];
 // Changes whenever the file does, so browsers never keep a stale copy.
 const fileVersion = (name) =>
