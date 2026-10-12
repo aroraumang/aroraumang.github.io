@@ -256,6 +256,7 @@ main.wrap {
 
 .mainnav a {
   padding: 0.45rem 0.9rem;
+  white-space: nowrap;
   border-radius: 999px;
   color: var(--text-2);
   font-size: 0.9375rem;
@@ -339,8 +340,16 @@ main.wrap {
     display: none;
   }
 
+  .mainnav {
+    gap: 0;
+  }
+
   .mainnav a {
-    padding: 0.45rem 0.7rem;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .mainnav .external::after {
+    display: none;
   }
 
   .subnav {

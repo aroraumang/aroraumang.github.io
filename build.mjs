@@ -10,6 +10,9 @@
 //   constants/legal/privacyPolicy.json, the same file the app shows. Set
 //   PAISOLOG_DIR if the PaisoLog repo isn't next to this one.
 // - sitemap.xml lists every page except 404.
+// - APPS_LIVE switches the Apps section (/apps/ and /paisolog/) on or off.
+//   Off, those pages aren't built, their old output is removed, and the nav
+//   and footer stop linking to them.
 //
 // No dependencies. The only client-side JavaScript is a page's own `script:`
 // file (dog.js on the home page), allowed by that page's CSP and nothing else.
@@ -21,6 +24,9 @@ import { fileURLToPath } from "node:url";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const SITE_URL = "https://umangarora.com";
 const SUPPORT_EMAIL = "paisolog@umangarora.com";
+const CONTACT_EMAIL = "hi@umangarora.com";
+const APPS_LIVE = true;
+const APP_SECTIONS = ["apps", "paisolog"];
 // Changes whenever the file does, so browsers never keep a stale copy.
 const fileVersion = (name) =>
   crypto
@@ -47,13 +53,15 @@ const emailLink = (email) =>
 
 const fill = (html) =>
   html
+    .replace(/\{\{CONTACT_EMAIL_LINK\}\}/g, emailLink(CONTACT_EMAIL))
     .replace(/\{\{SUPPORT_EMAIL_LINK\}\}/g, emailLink(SUPPORT_EMAIL))
     .replace(/\{\{SUPPORT_EMAIL\}\}/g, SUPPORT_EMAIL);
 
 const MAIN_NAV = [
-  ["/apps/", "Apps"],
+  ...(APPS_LIVE ? [["/apps/", "Apps"]] : []),
   ["https://github.com/aroraumang", "GitHub"],
   ["https://www.linkedin.com/in/meumangarora", "LinkedIn"],
+  [`mailto:${CONTACT_EMAIL}`, "Say hi"],
 ];
 
 const PAISOLOG_NAV = [
@@ -73,6 +81,9 @@ const navLinks = (items, urlPath, { sections = false } = {}) =>
   items
     .map(([href, label]) => {
       const external = href.startsWith("http");
+      if (href.startsWith("mailto:")) {
+        return `<!--email_off--><a href="${href}">${label}</a><!--/email_off-->`;
+      }
       const current =
         href === urlPath
           ? ' aria-current="page"'
@@ -135,17 +146,18 @@ ${body.trim()}
 <p>No cookies, analytics or trackers.</p>
 </div>
 <nav class="footer-cols" aria-label="Footer">
-<div>
+${APPS_LIVE ? `<div>
 <p>Apps</p>
 <a href="/apps/">All apps</a>
 <a href="/paisolog/">PaisoLog</a>
 <a href="/paisolog/privacy/">PaisoLog privacy</a>
 <a href="/paisolog/support/">PaisoLog support</a>
 </div>
-<div>
+` : ""}<div>
 <p>Elsewhere</p>
 <a href="https://github.com/aroraumang">GitHub</a>
 <a href="https://www.linkedin.com/in/meumangarora">LinkedIn</a>
+${emailLink(CONTACT_EMAIL)}
 </div>
 </nav>
 <p class="copyright">&copy; ${new Date().getFullYear()} Umang Arora</p>
@@ -230,8 +242,15 @@ const pages = walk(path.join(root, "_src"))
       name === "404" ? "/404" : "/" + parts.map((p) => `${p}/`).join("");
     const { title, description, width, script, body } = readFragment(file);
     return { title, description, width, script, urlPath, body: fill(body) };
-  });
-pages.push(privacyPage());
+  })
+  .filter((page) => APPS_LIVE || !APP_SECTIONS.includes(page.urlPath.split("/")[1]));
+if (APPS_LIVE) {
+  pages.push(privacyPage());
+} else {
+  for (const dir of APP_SECTIONS) {
+    fs.rmSync(path.join(root, dir), { recursive: true, force: true });
+  }
+}
 
 for (const page of pages) {
   const out =
