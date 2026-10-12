@@ -1,52 +1,157 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="theme-paisolog">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FBF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17110D" media="(prefers-color-scheme: dark)">
 <title>PaisoLog | Umang Arora</title>
-<meta name="description" content="PaisoLog is a private expense tracker for iPhone and Android. Everything stays on your phone.">
+<meta name="description" content="PaisoLog is a private expense tracker for iPhone and Android. No accounts, no servers: everything stays on your phone.">
 <link rel="canonical" href="https://umangarora.com/paisolog/">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="/assets/paisolog-icon.png">
+<link rel="stylesheet" href="/style.css?v=a728f1ba">
 </head>
 <body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="top">
 <header class="site-header">
-<a class="site-name" href="/">Umang Arora</a>
-<nav class="subnav" aria-label="PaisoLog"><a href="/paisolog/" aria-current="page">PaisoLog</a><a href="/paisolog/privacy/">Privacy</a><a href="/paisolog/support/">Support</a></nav>
+<div class="wrap">
+<a class="logo" href="/" aria-label="Umang Arora, home"><span class="logo-mark" aria-hidden="true">UA</span><span class="logo-name">Umang Arora</span></a>
+<nav class="mainnav" aria-label="Main"><a href="/apps/" aria-current="true">Apps</a><a href="https://github.com/aroraumang" class="external">GitHub</a><a href="https://www.linkedin.com/in/meumangarora" class="external">LinkedIn</a></nav>
+</div>
 </header>
-<main>
-<div class="app-hero">
-<img src="/assets/paisolog-icon.png" width="96" height="96" alt="">
+<div class="app-bar">
+<div class="wrap">
+<a class="app-brand" href="/paisolog/"><img src="/assets/paisolog-icon.png" width="28" height="28" alt="">PaisoLog</a>
+<nav class="subnav" aria-label="PaisoLog"><a href="/paisolog/" aria-current="page">Overview</a><a href="/paisolog/privacy/">Privacy</a><a href="/paisolog/support/">Support</a></nav>
+</div>
+</div>
+</div>
+<main id="content" class="wrap">
+<section class="hero">
+<div class="hero-text">
+<p class="eyebrow">Expense tracker for iPhone and Android</p>
+<h1>Track your spending. Keep it on&nbsp;your&nbsp;phone.</h1>
+<p class="lead">PaisoLog is a simple, private money log. There's no account to create and no server in the middle. Everything you enter stays on your phone.</p>
+<p class="pill">Coming soon to the App Store and Google Play</p>
+<p class="actions">
+<a class="button" href="/paisolog/privacy/">Read the privacy policy</a>
+<a class="button secondary" href="/paisolog/support/">Get support</a>
+</p>
+</div>
+
+<div class="phone-wrap" aria-hidden="true">
+<div class="phone">
+<div class="screen">
+<div class="screen-top">
+<span>October</span>
+<img src="/assets/paisolog-icon.png" width="28" height="28" alt="">
+</div>
+<p class="screen-label">Spent this month</p>
+<p class="screen-total">₹18,420</p>
+<div class="budget">
+<div class="budget-row"><span>Monthly budget</span><span>62%</span></div>
+<div class="bar"><span></span></div>
+</div>
+<ul class="ledger">
+<li><span class="dot food"></span><span>Groceries<small>Today · Card</small></span><b class="out">−₹1,240</b></li>
+<li><span class="dot cafe"></span><span>Coffee<small>Today · Cash</small></span><b class="out">−₹180</b></li>
+<li><span class="dot home"></span><span>Electricity<small>Yesterday · Bank</small></span><b class="out">−₹2,310</b></li>
+<li><span class="dot pay"></span><span>Salary<small>1 Oct · Bank</small></span><b class="in">+₹85,000</b></li>
+<li><span class="dot travel"></span><span>Metro card<small>30 Sep · Card</small></span><b class="out">−₹500</b></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<section class="block reveal">
+<h2 class="section-title">Everything you need, nothing you don't</h2>
+<ul class="features">
+<li>
+<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h3"/></svg>
+<h3>Every account, any currency</h3>
+<p>Cash, bank accounts and credit cards, with totals converted to your main currency.</p>
+</li>
+<li>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+<h3>Receipts with every entry</h3>
+<p>Attach photos and PDFs to a transaction. They're kept with it, on your phone.</p>
+</li>
+<li>
+<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+<h3>Credit card bills, sorted</h3>
+<p>Billing cycles, statements and due dates, with a reminder before a bill is due.</p>
+</li>
+<li>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 5"/></svg>
+<h3>Budgets that keep up</h3>
+<p>Weekly, monthly, yearly or custom budgets, by category and account.</p>
+</li>
+<li>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>
+<h3>Recurring, handled</h3>
+<p>Rent, salary and subscriptions are added for you, right on time.</p>
+</li>
+<li>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+<h3>Reports and search</h3>
+<p>See where your money went each month, and find any entry by note, payee, tag or amount.</p>
+</li>
+</ul>
+</section>
+
+<section class="band reveal">
+<div class="band-inner">
+<h2 class="section-title">Private by design</h2>
+<ul class="promises">
+<li><h3>No account</h3><p>Nothing to sign up for. Open the app and start logging.</p></li>
+<li><h3>No servers, no tracking</h3><p>No ads, no analytics, no crash reporting. Your entries aren't sent anywhere.</p></li>
+<li><h3>Locked to you</h3><p>Turn on Device Lock to open the app with Face ID, fingerprint or your passcode.</p></li>
+<li><h3>One small exception</h3><p>To convert currencies, the app downloads exchange rates. That request includes only your base currency.</p></li>
+</ul>
+<p><a class="button light" href="/paisolog/privacy/">Read the privacy policy</a></p>
+</div>
+</section>
+
+<section class="block split reveal">
 <div>
-<h1>PaisoLog</h1>
-<p class="lead">A private expense tracker for iPhone and Android.</p>
+<h2 class="section-title">Your data, your backups</h2>
+<p>Save a backup file to any folder or cloud drive you choose, with an optional password. PaisoLog also keeps weekly copies on your phone, and a restore can be undone if you pick the wrong file.</p>
+<p><a href="/paisolog/support/#backups">How backups work</a></p>
 </div>
+<div>
+<h2 class="section-title">Questions or ideas?</h2>
+<p>Email <!--email_off--><a href="mailto:paisolog@umangarora.com">paisolog@umangarora.com</a><!--/email_off-->. A real person reads every message.</p>
+<p><a href="/paisolog/support/">Visit the support page</a></p>
 </div>
-
-<p>Everything you enter is stored on your phone. There are no accounts, no sign-in and no PaisoLog servers. The only thing the app downloads is daily exchange rates.</p>
-
-<h2>What it does</h2>
-<ul>
-<li>Track expenses, income and transfers across cash, bank accounts and credit cards, in any currency.</li>
-<li>Keep receipt photos and PDFs with each transaction.</li>
-<li>Follow credit card bills and due dates.</li>
-<li>Set budgets and see where your money goes each month.</li>
-<li>Add rent, salary and subscriptions automatically.</li>
-<li>Back up to a file you control, with an optional password.</li>
-<li>Lock the app with Face ID, fingerprint or your passcode.</li>
-</ul>
-
-<h2>Help and policies</h2>
-<ul class="links">
-<li><a href="/paisolog/privacy/">Privacy policy</a></li>
-<li><a href="/paisolog/support/">Support</a>, or email <!--email_off--><a href="mailto:paisolog@umangarora.com">paisolog@umangarora.com</a><!--/email_off--></li>
-</ul>
+</section>
 </main>
 <footer class="site-footer">
-<p>&copy; 2026 Umang Arora. This site has no cookies, analytics or trackers.</p>
+<div class="wrap">
+<div class="footer-brand">
+<a class="logo" href="/"><span class="logo-mark" aria-hidden="true">UA</span><span>Umang Arora</span></a>
+<p>No cookies, analytics or trackers.</p>
+</div>
+<nav class="footer-cols" aria-label="Footer">
+<div>
+<p>Apps</p>
+<a href="/apps/">All apps</a>
+<a href="/paisolog/">PaisoLog</a>
+<a href="/paisolog/privacy/">PaisoLog privacy</a>
+<a href="/paisolog/support/">PaisoLog support</a>
+</div>
+<div>
+<p>Elsewhere</p>
+<a href="https://github.com/aroraumang">GitHub</a>
+<a href="https://www.linkedin.com/in/meumangarora">LinkedIn</a>
+</div>
+</nav>
+<p class="copyright">&copy; 2026 Umang Arora</p>
+</div>
 </footer>
 </body>
 </html>

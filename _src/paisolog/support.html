@@ -2,12 +2,19 @@
 title: PaisoLog support
 description: Get help with PaisoLog: contact details, reporting a problem, sharing the error log, and how backups work.
 -->
-<h1>PaisoLog support</h1>
-<p class="lead">Questions, problems or ideas? Email {{SUPPORT_EMAIL_LINK}} and you'll hear back from a real person.</p>
+<p class="eyebrow">Support</p>
+<h1>How can we help?</h1>
+<p class="lead">Questions, problems or ideas are all welcome. A real person reads every message.</p>
 
-<p>The quickest way to write is from the app: go to <strong>Settings &gt; About &amp; support &gt; Contact support</strong>. It opens an email with your app version and phone software already filled in.</p>
+<div class="contact-card">
+<div>
+<p class="contact-label">Email us</p>
+<p class="contact-email">{{SUPPORT_EMAIL_LINK}}</p>
+<p>Tip: in the app, go to <strong>Settings &gt; About &amp; support &gt; Contact support</strong>. It opens an email with your app version and phone software already filled in.</p>
+</div>
+</div>
 
-<nav class="toc" aria-label="On this page">
+<nav class="toc" aria-label="On this page"><p>On this page</p>
 <ul>
 <li><a href="#report">Reporting a problem</a></li>
 <li><a href="#error-log">Sharing the error log</a></li>
@@ -30,7 +37,7 @@ description: Get help with PaisoLog: contact details, reporting a problem, shari
 
 <h2 id="error-log">Sharing the error log</h2>
 <p>When something goes wrong, PaisoLog notes the error on your phone. This log has technical details only, with no transactions or account details, and it never leaves your phone unless you share it.</p>
-<ol>
+<ol class="steps">
 <li>Open <strong>Settings</strong> and scroll to <strong>About &amp; support</strong>.</li>
 <li>Tap <strong>Error log</strong>. It shows how many errors have been recorded.</li>
 <li>Tap <strong>Share</strong> and send it to {{SUPPORT_EMAIL_LINK}} with your email app.</li>
@@ -44,26 +51,26 @@ description: Get help with PaisoLog: contact details, reporting a problem, shari
 <p><strong>Create local backup</strong> saves a single <code>.paisolog</code> file with all your data and receipt attachments to a folder you choose. You can add a password to protect it.</p>
 <ul>
 <li>Keep a copy somewhere other than your phone, such as a cloud drive or your computer, so it's safe if your phone is lost.</li>
-<li>Remember your backup password. There is no way to open the file without it, and we can't recover it for you.</li>
 </ul>
+<p class="callout"><strong>Remember your backup password.</strong> There is no way to open the file without it, and we can't recover it for you.</p>
 
 <h3>Automatic copies on your phone</h3>
 <p>PaisoLog also keeps a few copies inside the app: one each week, and one just before every restore or reset. You can see them in <strong>Backups on this phone</strong>. They are handy for undoing a mistake, but they are deleted if you uninstall the app or lose your phone, so they don't replace a backup you save yourself.</p>
 
 <h3>Restoring</h3>
-<ol>
+<ol class="steps">
 <li>Go to <strong>Settings &gt; Storage &amp; backup &gt; Restore from backup</strong>.</li>
 <li>Pick your <code>.paisolog</code> file, and enter its password if it has one.</li>
 </ol>
 <p>Restoring replaces everything currently in the app with what's in the backup. PaisoLog saves a copy of your current data first, and you can undo the restore if you picked the wrong file.</p>
 
 <h3>Moving to a new phone</h3>
-<ol>
+<ol class="steps">
 <li>On your old phone, create a backup and save it somewhere you can reach from the new phone.</li>
 <li>Install PaisoLog on the new phone.</li>
 <li>Restore the backup as described above.</li>
 </ol>
-<p>Uninstalling PaisoLog deletes all its data, so make a backup first.</p>
+<p class="callout">Uninstalling PaisoLog deletes all its data, so make a backup first.</p>
 
 <h2 id="privacy">Privacy</h2>
 <p>PaisoLog keeps your data on your phone and has no accounts or servers. Read the full <a href="/paisolog/privacy/">privacy policy</a>.</p>

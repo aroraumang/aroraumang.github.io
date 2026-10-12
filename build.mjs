@@ -12,6 +12,7 @@
 // - sitemap.xml lists every page except 404.
 //
 // No dependencies, no client-side JavaScript.
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,6 +20,12 @@ import { fileURLToPath } from "node:url";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const SITE_URL = "https://umangarora.com";
 const SUPPORT_EMAIL = "paisolog@umangarora.com";
+// Changes whenever style.css does, so browsers never keep a stale copy.
+const cssVersion = crypto
+  .createHash("sha1")
+  .update(fs.readFileSync(path.join(root, "style.css")))
+  .digest("hex")
+  .slice(0, 8);
 const paisologDir = path.resolve(
   process.env.PAISOLOG_DIR ?? path.join(root, "..", "PaisoLog")
 );
@@ -40,53 +47,117 @@ const fill = (html) =>
     .replace(/\{\{SUPPORT_EMAIL_LINK\}\}/g, emailLink(SUPPORT_EMAIL))
     .replace(/\{\{SUPPORT_EMAIL\}\}/g, SUPPORT_EMAIL);
 
-const SECTIONS = {
-  paisolog: [
-    ["/paisolog/", "PaisoLog"],
-    ["/paisolog/privacy/", "Privacy"],
-    ["/paisolog/support/", "Support"],
-  ],
+const MAIN_NAV = [
+  ["/apps/", "Apps"],
+  ["https://github.com/aroraumang", "GitHub"],
+  ["https://www.linkedin.com/in/meumangarora", "LinkedIn"],
+];
+
+const PAISOLOG_NAV = [
+  ["/paisolog/", "Overview"],
+  ["/paisolog/privacy/", "Privacy"],
+  ["/paisolog/support/", "Support"],
+];
+
+// Pages under /paisolog/ wear the app's own theme; everything else uses the
+// site theme.
+const THEMES = {
+  site: { light: "#fafafa", dark: "#09090b", icon: "/favicon.svg" },
+  paisolog: { light: "#FBF8F3", dark: "#17110D", icon: "/assets/paisolog-icon.png" },
 };
 
-function layout({ title, description, urlPath, body }) {
-  const section = SECTIONS[urlPath.split("/")[1]];
-  const subnav = section
-    ? `<nav class="subnav" aria-label="PaisoLog">${section
-        .map(
-          ([href, label]) =>
-            `<a href="${href}"${href === urlPath ? ' aria-current="page"' : ""}>${label}</a>`
-        )
-        .join("")}</nav>`
+const navLinks = (items, urlPath, { sections = false } = {}) =>
+  items
+    .map(([href, label]) => {
+      const external = href.startsWith("http");
+      const current =
+        href === urlPath
+          ? ' aria-current="page"'
+          : sections && !external && urlPath.startsWith(href)
+            ? ' aria-current="true"'
+            : "";
+      return `<a href="${href}"${current}${external ? ' class="external"' : ""}>${label}</a>`;
+    })
+    .join("");
+
+function layout({ title, description, urlPath, body, width }) {
+  const isPaisolog = urlPath.startsWith("/paisolog/");
+  const theme = THEMES[isPaisolog ? "paisolog" : "site"];
+  // PaisoLog pages count as part of Apps in the main nav.
+  const navPath = isPaisolog ? "/apps/paisolog" : urlPath;
+  const appBar = isPaisolog
+    ? `<div class="app-bar">
+<div class="wrap">
+<a class="app-brand" href="/paisolog/"><img src="/assets/paisolog-icon.png" width="28" height="28" alt="">PaisoLog</a>
+<nav class="subnav" aria-label="PaisoLog">${navLinks(PAISOLOG_NAV, urlPath)}</nav>
+</div>
+</div>
+`
     : "";
+  const mainClass =
+    width === "full" ? "full" : width === "wide" ? "wrap" : "wrap prose";
   const fullTitle = title === "Umang Arora" ? title : `${title} | Umang Arora`;
   return `<!doctype html>
-<html lang="en">
+<html lang="en" class="theme-${isPaisolog ? "paisolog" : "site"}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="${theme.light}" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="${theme.dark}" media="(prefers-color-scheme: dark)">
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeHtml(description)}">
-${urlPath === "/404" ? "" : `<link rel="canonical" href="${SITE_URL}${urlPath}">\n`}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/style.css">
+${urlPath === "/404" ? "" : `<link rel="canonical" href="${SITE_URL}${urlPath}">\n`}<link rel="icon" href="${theme.icon}">
+<link rel="stylesheet" href="/style.css?v=${cssVersion}">
 </head>
 <body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="top">
 <header class="site-header">
-<a class="site-name" href="/">Umang Arora</a>
-${subnav}
+<div class="wrap">
+<a class="logo" href="/" aria-label="Umang Arora, home"><span class="logo-mark" aria-hidden="true">UA</span><span class="logo-name">Umang Arora</span></a>
+<nav class="mainnav" aria-label="Main">${navLinks(MAIN_NAV, navPath, { sections: true })}</nav>
+</div>
 </header>
-<main>
+${appBar}</div>
+<main id="content" class="${mainClass}">
 ${body.trim()}
 </main>
 <footer class="site-footer">
-<p>&copy; ${new Date().getFullYear()} Umang Arora. This site has no cookies, analytics or trackers.</p>
+<div class="wrap">
+<div class="footer-brand">
+<a class="logo" href="/"><span class="logo-mark" aria-hidden="true">UA</span><span>Umang Arora</span></a>
+<p>No cookies, analytics or trackers.</p>
+</div>
+<nav class="footer-cols" aria-label="Footer">
+<div>
+<p>Apps</p>
+<a href="/apps/">All apps</a>
+<a href="/paisolog/">PaisoLog</a>
+<a href="/paisolog/privacy/">PaisoLog privacy</a>
+<a href="/paisolog/support/">PaisoLog support</a>
+</div>
+<div>
+<p>Elsewhere</p>
+<a href="https://github.com/aroraumang">GitHub</a>
+<a href="https://www.linkedin.com/in/meumangarora">LinkedIn</a>
+</div>
+</nav>
+<p class="copyright">&copy; ${new Date().getFullYear()} Umang Arora</p>
+</div>
 </footer>
 </body>
 </html>
 `;
 }
+
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
 // A fragment starts with an HTML comment of "key: value" lines.
 function readFragment(file) {
@@ -124,11 +195,16 @@ function privacyPage() {
   const para = (text) =>
     `<p>${escapeHtml(text).replace(/\{\{SUPPORT_EMAIL\}\}/g, emailLink(SUPPORT_EMAIL))}</p>`;
   const body = [
+    `<p class="eyebrow">Effective ${formatDate(policy.effectiveDate)}</p>`,
     `<h1>${escapeHtml(policy.title)}</h1>`,
-    `<p class="meta">Effective ${formatDate(policy.effectiveDate)}</p>`,
     `<p class="lead">${escapeHtml(policy.intro)}</p>`,
+    `<nav class="toc" aria-label="On this page"><p>On this page</p><ul>`,
+    ...policy.sections.map(
+      (s) => `<li><a href="#${slugify(s.heading)}">${escapeHtml(s.heading)}</a></li>`
+    ),
+    `</ul></nav>`,
     ...policy.sections.flatMap((s) => [
-      `<h2>${escapeHtml(s.heading)}</h2>`,
+      `<h2 id="${slugify(s.heading)}">${escapeHtml(s.heading)}</h2>`,
       ...s.body.map(para),
     ]),
   ].join("\n");
@@ -149,8 +225,8 @@ const pages = walk(path.join(root, "_src"))
     const parts = name === "index" ? rel : [...rel, name];
     const urlPath =
       name === "404" ? "/404" : "/" + parts.map((p) => `${p}/`).join("");
-    const { title, description, body } = readFragment(file);
-    return { title, description, urlPath, body: fill(body) };
+    const { title, description, width, body } = readFragment(file);
+    return { title, description, width, urlPath, body: fill(body) };
   });
 pages.push(privacyPage());
 
