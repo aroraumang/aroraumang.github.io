@@ -1,34 +1,36 @@
 /* ---------------------------------------------------------------------------
-   Themes. The site uses neutral greys with a gradient accent. Pages under
+   Themes. The site uses warm paper and ink with a sunset gradient accent. Pages under
    /paisolog/ get html.theme-paisolog, which swaps in the app's own palette
    from PaisoLog's constants/theme.ts (dark brown ink on warm paper).
    ------------------------------------------------------------------------ */
 
 :root {
   color-scheme: light dark;
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --surface-muted: #f4f4f5;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-  --text: #09090b;
-  --text-2: #52525b;
-  --brand: #09090b;
-  --brand-soft: #f4f4f5;
-  --on-brand: #fafafa;
-  --link: #6d28d9;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --info: #0891b2;
-  --warning: #d97706;
-  --warning-soft: #fef3c7;
-  --g1: #6366f1;
-  --g2: #a855f7;
-  --g3: #ec4899;
+  /* Light mode is a soft, warm off-white rather than bright white. */
+  --bg: #f3f0e9;
+  --surface: #f9f7f2;
+  --surface-muted: #ebe7de;
+  --border: #dfd9cd;
+  --border-strong: #cdc6b8;
+  --text: #1f1d1a;
+  --text-2: #5d5850;
+  --brand: #1f1d1a;
+  --brand-soft: #e8e3d9;
+  --on-brand: #f6f4ee;
+  --link: #9a4521;
+  --success: #3f7d4a;
+  --danger: #b4443a;
+  --info: #2f7383;
+  --warning: #b07a24;
+  --warning-soft: #f1e6cf;
+  --g1: #b8475f;
+  --g2: #c4572e;
+  --g3: #d0912f;
   --gradient: linear-gradient(120deg, var(--g1), var(--g2) 50%, var(--g3));
   --logo-bg: var(--gradient);
-  --header-bg: rgb(250 250 250 / 72%);
-  --shadow: 0 1px 2px rgb(9 9 11 / 5%), 0 16px 40px -16px rgb(9 9 11 / 18%);
+  --header-bg: rgb(243 240 233 / 78%);
+  --shadow: 0 1px 2px rgb(31 29 26 / 5%), 0 14px 36px -18px rgb(31 29 26 / 16%);
+  --glow: 0.2;
   --radius: 20px;
   --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --display: var(--font);
@@ -37,26 +39,27 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #09090b;
-    --surface: #131316;
-    --surface-muted: #1c1c20;
-    --border: #27272a;
-    --border-strong: #3f3f46;
-    --text: #fafafa;
-    --text-2: #a1a1aa;
-    --brand: #fafafa;
-    --brand-soft: #27272a;
-    --on-brand: #09090b;
-    --link: #c4b5fd;
-    --success: #4ade80;
-    --danger: #f87171;
-    --info: #22d3ee;
-    --warning: #fbbf24;
-    --warning-soft: #2b2110;
-    --g1: #818cf8;
-    --g2: #c084fc;
-    --g3: #f472b6;
-    --header-bg: rgb(9 9 11 / 70%);
+    --bg: #0e0c0a;
+    --surface: #181512;
+    --surface-muted: #201c18;
+    --border: #2c2722;
+    --border-strong: #45403a;
+    --text: #f5f1ea;
+    --text-2: #aaa39b;
+    --brand: #f5f1ea;
+    --brand-soft: #2c2722;
+    --on-brand: #0e0c0a;
+    --link: #f2a679;
+    --success: #6fbf7e;
+    --danger: #f08070;
+    --info: #6cc0cf;
+    --warning: #f0b856;
+    --warning-soft: #2e2414;
+    --g1: #ee7d93;
+    --g2: #f08a5d;
+    --g3: #f5bd63;
+    --header-bg: rgb(14 12 10 / 72%);
+    --glow: 0.2;
     --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 20px 48px -20px rgb(0 0 0 / 70%);
   }
 }
@@ -707,8 +710,8 @@ strong {
   width: 46vmax;
   height: 46vmax;
   border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.35;
+  filter: blur(80px);
+  opacity: var(--glow);
 }
 
 .hello-bg span:nth-child(1) {
@@ -721,24 +724,14 @@ strong {
   right: -14vmax;
   top: 0;
   background: var(--g3);
-  opacity: 0.25;
+  opacity: calc(var(--glow) * 0.7);
 }
 
 .hello-bg span:nth-child(3) {
   bottom: -26vmax;
   left: 22%;
   background: var(--g2);
-  opacity: 0.3;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hello-bg span {
-    opacity: 0.22;
-  }
-
-  .hello-bg span:nth-child(2) {
-    opacity: 0.16;
-  }
+  opacity: calc(var(--glow) * 0.85);
 }
 
 .hello-title {

@@ -65,7 +65,7 @@ const PAISOLOG_NAV = [
 // Pages under /paisolog/ wear the app's own theme; everything else uses the
 // site theme.
 const THEMES = {
-  site: { light: "#fafafa", dark: "#09090b", icon: "/favicon.svg" },
+  site: { light: "#f3f0e9", dark: "#0e0c0a", icon: "/favicon.svg" },
   paisolog: { light: "#FBF8F3", dark: "#17110D", icon: "/assets/paisolog-icon.png" },
 };
 
