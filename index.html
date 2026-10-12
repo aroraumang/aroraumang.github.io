@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
 <title>Umang Arora</title>
-<meta name="description" content="Hello World! Umang Arora's personal site and apps.">
+<meta name="description" content="May the force be with you. Umang Arora's personal site and apps.">
 <link rel="canonical" href="https://umangarora.com/">
 <link rel="icon" href="/favicon.svg">
-<link rel="stylesheet" href="/style.css?v=a728f1ba">
+<link rel="stylesheet" href="/style.css?v=715fd016">
+<script src="/dog.js?v=178043ac" defer></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -27,7 +28,93 @@
 <main id="content" class="full">
 <section class="hello">
 <div class="hello-bg" aria-hidden="true"><span></span><span></span><span></span></div>
-<h1 class="hello-title"><span>Hello World!</span></h1>
+<h1 class="hello-title"><span>May the force<br> be with you.</span></h1>
+
+<!-- The dog: white with golden-tan patches, big upright ears and a curly
+     tail. dog.js sets data-mood from the visitor's clock. -->
+<div class="dog" data-mood="playful" aria-hidden="true">
+<div class="dog-hop">
+<svg class="pose pose-trot" viewBox="0 -16 140 112" width="140" height="112">
+<defs>
+<path id="dog-torso" d="M36 50 C35 40 46 35 60 35 C72 35 82 34 88 32 C92 26 97 20 102 16 L114 22 C110 30 106 40 104 50 C104 56 101 60 97 61 C90 62 84 60 74 59 C64 58 56 63 46 61 C38 59 36 56 36 50 Z"/>
+<clipPath id="dog-torso-clip"><use href="#dog-torso"/></clipPath>
+</defs>
+<ellipse class="shadow" cx="72" cy="93" rx="42" ry="3.5"/>
+<rect class="leg far leg-bf" x="44" y="54" width="6" height="38" rx="3"/>
+<rect class="leg far leg-ff" x="91" y="54" width="6" height="38" rx="3"/>
+<g class="tail">
+<path class="tail-line" d="M39 44 C28 40 24 26 32 20 C38 16 44 20 42 26 C41 29 38 30 36 29"/>
+<path class="tail-fill" d="M39 44 C28 40 24 26 32 20 C38 16 44 20 42 26 C41 29 38 30 36 29"/>
+</g>
+<g class="trunk">
+<use class="fur o" href="#dog-torso"/>
+<g clip-path="url(#dog-torso-clip)">
+<ellipse class="tan" cx="50" cy="39" rx="17" ry="10"/>
+<circle class="tan" cx="70" cy="38" r="1.6"/>
+<circle class="tan" cx="75" cy="41" r="1.2"/>
+<circle class="tan" cx="66" cy="43" r="1.1"/>
+</g>
+<path class="collar" d="M92 26 Q101 33 110 31"/>
+<g class="head">
+<g transform="translate(108 22) scale(1.22) translate(-108 -22)">
+<path class="tan-dark o" d="M102 9 L97 -12 L113 3 Z"/>
+<ellipse class="fur o" cx="110" cy="16" rx="10" ry="9"/>
+<path class="fur o" d="M112 11 C120 13 128 18 131 21 C133 23 131 26 128 26 L112 25 Z"/>
+<ellipse class="fur" cx="111" cy="18" rx="6" ry="6"/>
+<path class="tan" d="M100 15 C100 7 108 4 115 6 C119 8 121 12 121 16 C118 15 115 16 113 19 C110 20 106 21 102 22 Z"/>
+<circle class="eye" cx="115" cy="13" r="1.8"/>
+<circle class="shine" cx="115.6" cy="12.4" r="0.55"/>
+<ellipse class="nose" cx="130" cy="22" rx="2.6" ry="2.2"/>
+<path class="mouth" d="M118 24 Q122 27 127 25"/>
+<path class="tongue" d="M120 25 C119 32 125 33 125 26 Z"/>
+<path class="tan o" d="M105 8 L113 -16 L122 5 Z"/>
+<path class="ear-inner" d="M108.5 5 L113 -9 L118 4 Z"/>
+</g>
+</g>
+</g>
+<rect class="leg fur o leg-bn" x="50" y="54" width="6" height="38" rx="3"/>
+<rect class="leg fur o leg-fn" x="97" y="54" width="6" height="38" rx="3"/>
+</svg>
+</div>
+
+<svg class="pose pose-sleep" viewBox="0 -16 140 112" width="140" height="112">
+<defs>
+<path id="dog-curl" d="M22 88 C20 70 36 58 58 58 C80 58 96 66 99 80 C100 88 96 92 88 92 L30 92 C25 92 22 91 22 88 Z"/>
+<clipPath id="dog-curl-clip"><use href="#dog-curl"/></clipPath>
+</defs>
+<ellipse class="shadow" cx="70" cy="93" rx="52" ry="3.5"/>
+<g class="breathe">
+<use class="fur o" href="#dog-curl"/>
+<g clip-path="url(#dog-curl-clip)">
+<ellipse class="tan" cx="44" cy="63" rx="19" ry="9"/>
+<circle class="tan" cx="66" cy="62" r="1.5"/>
+<circle class="tan" cx="71" cy="65" r="1.1"/>
+</g>
+<ellipse class="fur o" cx="42" cy="80" rx="15" ry="10"/>
+</g>
+<path class="tail-line" d="M26 87 C34 97 64 97 84 92"/>
+<path class="tail-fill" d="M26 87 C34 97 64 97 84 92"/>
+<rect class="far" x="82" y="84" width="36" height="8" rx="4"/>
+<g class="head">
+<g transform="translate(100 84) scale(1.15) translate(-100 -84)">
+<path class="tan-dark o" d="M92 69 L75 61 L90 76 Z"/>
+<ellipse class="fur o" cx="100" cy="74" rx="11" ry="9"/>
+<path class="fur o" d="M104 72 C112 74 120 78 124 82 C125 85 122 86 119 86 L102 84 Z"/>
+<path class="tan" d="M90 74 C89 66 96 63 103 64 C108 65 111 69 111 73 C108 73 105 75 103 77 C99 78 94 78 91 78 Z"/>
+<path class="lid" d="M103 71 Q106.5 74 110 71"/>
+<ellipse class="nose" cx="123" cy="83" rx="2.4" ry="2"/>
+<path class="tan o" d="M96 68 L77 55 L101 63 Z"/>
+<path class="collar" d="M91 79 Q96 85 101 83"/>
+</g>
+</g>
+<rect class="fur o" x="86" y="87" width="34" height="7" rx="3.5"/>
+<g class="zzz">
+<text x="112" y="58">z</text>
+<text x="119" y="47">z</text>
+<text x="127" y="35">Z</text>
+</g>
+</svg>
+</div>
 </section>
 </main>
 <footer class="site-footer">

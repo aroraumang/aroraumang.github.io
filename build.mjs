@@ -11,7 +11,8 @@
 //   PAISOLOG_DIR if the PaisoLog repo isn't next to this one.
 // - sitemap.xml lists every page except 404.
 //
-// No dependencies, no client-side JavaScript.
+// No dependencies. The only client-side JavaScript is a page's own `script:`
+// file (dog.js on the home page), allowed by that page's CSP and nothing else.
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -20,12 +21,14 @@ import { fileURLToPath } from "node:url";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const SITE_URL = "https://umangarora.com";
 const SUPPORT_EMAIL = "paisolog@umangarora.com";
-// Changes whenever style.css does, so browsers never keep a stale copy.
-const cssVersion = crypto
-  .createHash("sha1")
-  .update(fs.readFileSync(path.join(root, "style.css")))
-  .digest("hex")
-  .slice(0, 8);
+// Changes whenever the file does, so browsers never keep a stale copy.
+const fileVersion = (name) =>
+  crypto
+    .createHash("sha1")
+    .update(fs.readFileSync(path.join(root, name)))
+    .digest("hex")
+    .slice(0, 8);
+const cssVersion = fileVersion("style.css");
 const paisologDir = path.resolve(
   process.env.PAISOLOG_DIR ?? path.join(root, "..", "PaisoLog")
 );
@@ -80,7 +83,7 @@ const navLinks = (items, urlPath, { sections = false } = {}) =>
     })
     .join("");
 
-function layout({ title, description, urlPath, body, width }) {
+function layout({ title, description, urlPath, body, width, script }) {
   const isPaisolog = urlPath.startsWith("/paisolog/");
   const theme = THEMES[isPaisolog ? "paisolog" : "site"];
   // PaisoLog pages count as part of Apps in the main nav.
@@ -102,7 +105,7 @@ function layout({ title, description, urlPath, body, width }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self';${script ? " script-src 'self';" : ""} base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="${theme.light}" media="(prefers-color-scheme: light)">
@@ -111,7 +114,7 @@ function layout({ title, description, urlPath, body, width }) {
 <meta name="description" content="${escapeHtml(description)}">
 ${urlPath === "/404" ? "" : `<link rel="canonical" href="${SITE_URL}${urlPath}">\n`}<link rel="icon" href="${theme.icon}">
 <link rel="stylesheet" href="/style.css?v=${cssVersion}">
-</head>
+${script ? `<script src="/${script}?v=${fileVersion(script)}" defer></script>\n` : ""}</head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <div class="top">
@@ -225,8 +228,8 @@ const pages = walk(path.join(root, "_src"))
     const parts = name === "index" ? rel : [...rel, name];
     const urlPath =
       name === "404" ? "/404" : "/" + parts.map((p) => `${p}/`).join("");
-    const { title, description, width, body } = readFragment(file);
-    return { title, description, width, urlPath, body: fill(body) };
+    const { title, description, width, script, body } = readFragment(file);
+    return { title, description, width, script, urlPath, body: fill(body) };
   });
 pages.push(privacyPage());
 

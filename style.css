@@ -743,7 +743,7 @@ strong {
 
 .hello-title {
   margin: 0;
-  font-size: clamp(3.25rem, 1rem + 11vw, 10.5rem);
+  font-size: clamp(3rem, 1rem + 7.5vw, 8.5rem);
   font-weight: 850;
   line-height: 1;
   letter-spacing: -0.055em;
@@ -761,8 +761,8 @@ strong {
 
 @media (max-width: 34rem) {
   .hello-title {
-    font-size: 22vw;
-    line-height: 0.95;
+    font-size: 15vw;
+    line-height: 1;
   }
 }
 
@@ -776,6 +776,159 @@ strong {
   border-radius: 0.02em;
   background: var(--g3);
   vertical-align: -0.04em;
+}
+
+/* The dog, drawn after Umang's: white with golden-tan patches, big upright
+   ears, a tan face with a white muzzle and a curly white tail. dog.js sets
+   data-mood from the visitor's clock. Playful: she trots along the bottom of
+   the page. Sleepy: she's curled up in the corner. Without motion, both
+   poses hold still. */
+.dog {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 0.75rem;
+  width: 140px;
+  pointer-events: none;
+  --dog-line: #3b2a20;
+  --dog-fur: #fffdf9;
+  --dog-far: #ebe4da;
+  --dog-tan: #dfa463;
+  --dog-tan-dark: #c78744;
+}
+
+.dog svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.dog[data-mood="playful"] .pose-sleep,
+.dog[data-mood="sleepy"] .dog-hop {
+  display: none;
+}
+
+.dog .o {
+  stroke: var(--dog-line);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.dog .fur {
+  fill: var(--dog-fur);
+}
+
+.dog .far {
+  fill: var(--dog-far);
+  stroke: var(--dog-line);
+  stroke-width: 1.8;
+}
+
+.dog .tan {
+  fill: var(--dog-tan);
+}
+
+.dog .tan-dark {
+  fill: var(--dog-tan-dark);
+}
+
+.dog .ear-inner {
+  fill: #f2b5a6;
+}
+
+.dog .eye,
+.dog .nose {
+  fill: #1c1410;
+}
+
+.dog .shine {
+  fill: #fff;
+}
+
+.dog .mouth,
+.dog .lid {
+  fill: none;
+  stroke: #1c1410;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+}
+
+.dog .tongue {
+  fill: #ef8fa6;
+  stroke: #c56479;
+  stroke-width: 0.8;
+}
+
+.dog .collar {
+  fill: none;
+  stroke: #1f1f1f;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+.dog .tail-line,
+.dog .tail-fill {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dog .tail-line {
+  stroke: var(--dog-line);
+  stroke-width: 10;
+}
+
+.dog .tail-fill {
+  stroke: var(--dog-fur);
+  stroke-width: 6.5;
+}
+
+.dog .shadow {
+  fill: rgb(0 0 0 / 12%);
+}
+
+.dog .zzz text {
+  fill: var(--text-2);
+  font: 700 10px var(--font);
+}
+
+.dog .zzz text:nth-child(2) {
+  font-size: 12px;
+}
+
+.dog .zzz text:nth-child(3) {
+  font-size: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dog .shadow {
+    fill: rgb(0 0 0 / 45%);
+  }
+}
+
+.dog .leg,
+.dog .tail,
+.dog .trunk,
+.dog .head,
+.dog .zzz text {
+  transform-box: view-box;
+}
+
+.leg-bf { transform-origin: 47px 56px; }
+.leg-bn { transform-origin: 53px 56px; }
+.leg-ff { transform-origin: 94px 56px; }
+.leg-fn { transform-origin: 100px 56px; }
+.pose-trot .tail { transform-origin: 39px 44px; }
+.pose-trot .head { transform-origin: 104px 24px; }
+
+.dog .breathe {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+@media (max-width: 34rem) {
+  .dog {
+    width: 104px;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -1191,6 +1344,67 @@ strong {
     animation-duration: 30s;
   }
 
+  .dog[data-mood="playful"] {
+    right: auto;
+    left: 0;
+    animation: trot-across 28s linear infinite;
+  }
+
+  /* Keep the trot near the same speed on any screen, so the legs match. */
+  @media (max-width: 34rem) {
+    .dog[data-mood="playful"] {
+      animation-duration: 14s;
+    }
+  }
+
+  @media (min-width: 90rem) {
+    .dog[data-mood="playful"] {
+      animation-duration: 36s;
+    }
+  }
+
+  .dog-hop {
+    animation: hop 5.5s ease-in-out infinite;
+  }
+
+  .leg-bf,
+  .leg-fn {
+    animation: step 0.42s ease-in-out infinite alternate;
+  }
+
+  .leg-bn,
+  .leg-ff {
+    animation: step 0.42s ease-in-out -0.42s infinite alternate-reverse;
+  }
+
+  .pose-trot .trunk {
+    animation: bob 0.21s ease-in-out infinite alternate;
+  }
+
+  .pose-trot .head {
+    animation: nod 0.42s ease-in-out infinite alternate;
+  }
+
+  .pose-trot .tail {
+    animation: wag 0.28s ease-in-out infinite alternate;
+  }
+
+  .dog .breathe {
+    animation: breathe 3.6s ease-in-out infinite alternate;
+  }
+
+  .dog .zzz text {
+    animation: snooze 3.6s ease-out infinite both;
+  }
+
+  .dog .zzz text:nth-child(2) {
+    animation-delay: 1.2s;
+  }
+
+  .dog .zzz text:nth-child(3) {
+    animation-delay: 2.4s;
+  }
+
   .page-head > *,
   .hero-text > *,
   .prose > * {
@@ -1276,6 +1490,96 @@ strong {
 @keyframes drift {
   to {
     transform: translate(8vmax, 6vmax) scale(1.15);
+  }
+}
+
+/* Across to the right, turn round off-screen, and back again. */
+@keyframes trot-across {
+  0% {
+    transform: translateX(-140px) scaleX(1);
+  }
+  46% {
+    transform: translateX(calc(100vw + 20px)) scaleX(1);
+  }
+  50% {
+    transform: translateX(calc(100vw + 20px)) scaleX(-1);
+  }
+  96% {
+    transform: translateX(-140px) scaleX(-1);
+  }
+  100% {
+    transform: translateX(-140px) scaleX(1);
+  }
+}
+
+@keyframes step {
+  from {
+    transform: rotate(-24deg);
+  }
+  to {
+    transform: rotate(24deg);
+  }
+}
+
+@keyframes bob {
+  to {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes nod {
+  to {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes wag {
+  from {
+    transform: rotate(-18deg);
+  }
+  to {
+    transform: rotate(22deg);
+  }
+}
+
+/* A happy little bounce every few seconds while she trots. */
+@keyframes hop {
+  0%,
+  62%,
+  100% {
+    transform: translateY(0);
+  }
+  68% {
+    transform: translateY(-16px);
+  }
+  74% {
+    transform: translateY(0);
+  }
+  78% {
+    transform: translateY(-6px);
+  }
+  82% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes breathe {
+  to {
+    transform: scale(1.015, 1.05);
+  }
+}
+
+@keyframes snooze {
+  0% {
+    opacity: 0;
+    transform: translate(0, 4px);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(6px, -10px);
   }
 }
 
