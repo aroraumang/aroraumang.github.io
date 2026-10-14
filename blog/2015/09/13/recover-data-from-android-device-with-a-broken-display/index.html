@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" class="theme-site">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f3f0e9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e0c0a" media="(prefers-color-scheme: dark)">
+<title>How to recover data from an android device with a broken display | Umang Arora</title>
+<meta name="description" content="My Galaxy Note II's screen died with a pattern lock on and USB debugging off. Here's how I got my data off it with adb pull from a custom recovery.">
+<link rel="canonical" href="https://umangarora.com/blog/2015/09/13/recover-data-from-android-device-with-a-broken-display/">
+<link rel="icon" href="/favicon.svg">
+<link rel="alternate" type="application/atom+xml" title="Umang Arora's blog" href="/blog/atom.xml">
+<link rel="stylesheet" href="/style.css?v=313e9103">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="top">
+<header class="site-header">
+<div class="wrap">
+<a class="logo" href="/" aria-label="Umang Arora, home"><span class="logo-mark" aria-hidden="true">UA</span><span class="logo-name">Umang Arora</span></a>
+<nav class="mainnav" aria-label="Main"><a href="/blog/" aria-current="true">Blog</a><a href="/apps/">Apps</a><a href="https://github.com/aroraumang" class="external">GitHub</a><a href="https://www.linkedin.com/in/meumangarora" class="external">LinkedIn</a><!--email_off--><a href="mailto:hi@umangarora.com">Say hi</a><!--/email_off--></nav>
+</div>
+</header>
+</div>
+<main id="content" class="wrap prose">
+<p class="eyebrow"><time datetime="2015-09-13">13 September 2015</time></p>
+<h1>How to recover data from an android device with a broken display</h1>
+
+<p>Yesterday, I accidently dropped my Samsung Galaxy Note II and it's display broke.
+It's a 3 year old device on which I didn't want to spend another penny, so I wasn't
+sad but worried about my data in the Internal Storage of the phone.
+The screen was completely dead, even the touch was not working.</p>
+
+<p>The main problem was that the Pattern lock was enabled, due to which I wasn't
+able to connect the phone in
+<a href="https://en.wikipedia.org/wiki/Media_Transfer_Protocol" title="Media Transfer Protocol">MTP</a>
+mode, and <a href="https://developer.android.com/tools/adb" title="Android Debug Bridge">ADB</a>
+showed the device as <code>unauthorized</code>.</p>
+
+<pre><code>$ adb devices
+List of devices attached
+* daemon not running. starting it now on port 5037 *
+* daemon started successfully *
+&lt;device-id&gt;	unauthorized</code></pre>
+
+<p>At this point I was wondering why I didn't backup everything before, it was frustrating.</p>
+
+<p>After hours of searching through the web, I found a few solutions, but none of them
+were helpful as</p>
+
+<ul>
+<li>My phone was locked.</li>
+<li>USB Debugging was disabled.</li>
+</ul>
+
+<p>Then, I found this tool on XDA called
+<a href="https://xdaforums.com/showthread.php?t=2339530" title="ADB Data Recovery">ADB Data Recovery</a>
+by <a href="https://xdaforums.com/member.php?u=4507027" title="XDA user FuzzyMeep Two">FuzzyMeep Two</a>.
+Sadly, it was a tool for Windows and I had a Linux and a Mac machine.
+Luckily, I found what the tool actually does by going through the thread.
+The tool uses the command <code>adb pull</code> to fetch data from the phone's storage.
+But, for that to work you need to have a <code>Custom Recovery</code> installed on your phone, which
+in my case was already there.
+So, it turned out to be very easy for people who usually install Custom ROMs on
+their Android devices.</p>
+
+<ul>
+<li>Boot your phone into recovery mode.</li>
+<li>Connect your phone to the computer via USB.
+<ul>
+<li>Check if your phone is connected properly using <code>adb devices</code>.</li>
+<li>You will see a unique ID of your phone and the text <code>recovery</code> after it.</li>
+</ul>
+</li>
+<li>Now to backup your data use the <code>adb pull</code> command:
+<code>adb pull &lt;source-path&gt; &lt;target-path&gt;</code></li>
+</ul>
+
+<pre><code>$ adb pull sdcard/DCIM/Camera/ ~/backup
+pull: building file list...
+pull: sdcard/DCIM/Camera/IMG_20150916_174507.jpg -&gt; /Users/&lt;you&gt;/backup/IMG_20150916_174507.jpg
+1 file pulled. 0 files skipped.
+7193 KB/s (1650876 bytes in 0.224s)</code></pre>
+
+<p>I found this nice <a href="https://www.droidviews.com/push-pull-files-android-using-adb-commands/" title="adb pull">article</a>
+explaining the use case of <code>adb pull</code> command.</p>
+
+<p>So, to sum it all up, if you can somehow install custom recovery on your phone,
+you can save all your shit.</p>
+
+<p>May the force be with you!</p>
+</main>
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-brand">
+<a class="logo" href="/"><span class="logo-mark" aria-hidden="true">UA</span><span>Umang Arora</span></a>
+<p>No cookies, analytics or trackers.</p>
+</div>
+<nav class="footer-cols" aria-label="Footer">
+<div>
+<p>Apps</p>
+<a href="/apps/">All apps</a>
+<a href="/paisolog/">PaisoLog</a>
+<a href="/paisolog/privacy/">PaisoLog privacy</a>
+<a href="/paisolog/support/">PaisoLog support</a>
+</div>
+<div>
+<p>Blog</p>
+<a href="/blog/">All posts</a>
+<a href="/blog/atom.xml">Feed</a>
+</div>
+<div>
+<p>Elsewhere</p>
+<a href="https://github.com/aroraumang">GitHub</a>
+<a href="https://www.linkedin.com/in/meumangarora">LinkedIn</a>
+<!--email_off--><a href="mailto:hi@umangarora.com">hi@umangarora.com</a><!--/email_off-->
+</div>
+</nav>
+<p class="copyright">&copy; 2026 Umang Arora</p>
+</div>
+</footer>
+</body>
+</html>

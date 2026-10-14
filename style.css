@@ -357,6 +357,21 @@ main.wrap {
   }
 }
 
+/* Five nav links need tighter pills on small phones, and on the narrowest the
+   GitHub and LinkedIn links stay in the footer only. */
+@media (max-width: 24rem) {
+  .mainnav a {
+    padding: 0.4rem 0.45rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .mainnav .external {
+    display: none;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Footer
    ------------------------------------------------------------------------ */
@@ -978,6 +993,61 @@ strong {
   .dog {
     width: 104px;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Blog
+   ------------------------------------------------------------------------ */
+
+.post-list {
+  margin: 2.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-list li {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.post-list li + li {
+  margin-top: 0;
+}
+
+.post-list a {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.post-list p {
+  margin: 0.4rem 0;
+  color: var(--text-2);
+}
+
+.post-list time {
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.prose pre {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: var(--surface-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+.feed-link {
+  font-size: 0.9375rem;
 }
 
 /* ---------------------------------------------------------------------------

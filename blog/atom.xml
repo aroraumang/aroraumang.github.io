@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://umangarora.com/">
+<title>Umang Arora's blog</title>
+<link href="https://umangarora.com/blog/"/>
+<link rel="self" href="https://umangarora.com/blog/atom.xml"/>
+<id>https://umangarora.com/blog/</id>
+<updated>2015-09-13T00:00:00Z</updated>
+<author><name>Umang Arora</name></author>
+<entry>
+<title>How to recover data from an android device with a broken display</title>
+<link href="https://umangarora.com/blog/2015/09/13/recover-data-from-android-device-with-a-broken-display/"/>
+<id>https://umangarora.com/blog/2015/09/13/recover-data-from-android-device-with-a-broken-display/</id>
+<updated>2015-09-13T00:00:00Z</updated>
+<summary>My Galaxy Note II's screen died with a pattern lock on and USB debugging off. Here's how I got my data off it with adb pull from a custom recovery.</summary>
+<content type="html">&lt;p&gt;Yesterday, I accidently dropped my Samsung Galaxy Note II and it's display broke.
+It's a 3 year old device on which I didn't want to spend another penny, so I wasn't
+sad but worried about my data in the Internal Storage of the phone.
+The screen was completely dead, even the touch was not working.&lt;/p&gt;
+
+&lt;p&gt;The main problem was that the Pattern lock was enabled, due to which I wasn't
+able to connect the phone in
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Media_Transfer_Protocol&quot; title=&quot;Media Transfer Protocol&quot;&gt;MTP&lt;/a&gt;
+mode, and &lt;a href=&quot;https://developer.android.com/tools/adb&quot; title=&quot;Android Debug Bridge&quot;&gt;ADB&lt;/a&gt;
+showed the device as &lt;code&gt;unauthorized&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ adb devices
+List of devices attached
+* daemon not running. starting it now on port 5037 *
+* daemon started successfully *
+&amp;lt;device-id&amp;gt;	unauthorized&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;At this point I was wondering why I didn't backup everything before, it was frustrating.&lt;/p&gt;
+
+&lt;p&gt;After hours of searching through the web, I found a few solutions, but none of them
+were helpful as&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;My phone was locked.&lt;/li&gt;
+&lt;li&gt;USB Debugging was disabled.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Then, I found this tool on XDA called
+&lt;a href=&quot;https://xdaforums.com/showthread.php?t=2339530&quot; title=&quot;ADB Data Recovery&quot;&gt;ADB Data Recovery&lt;/a&gt;
+by &lt;a href=&quot;https://xdaforums.com/member.php?u=4507027&quot; title=&quot;XDA user FuzzyMeep Two&quot;&gt;FuzzyMeep Two&lt;/a&gt;.
+Sadly, it was a tool for Windows and I had a Linux and a Mac machine.
+Luckily, I found what the tool actually does by going through the thread.
+The tool uses the command &lt;code&gt;adb pull&lt;/code&gt; to fetch data from the phone's storage.
+But, for that to work you need to have a &lt;code&gt;Custom Recovery&lt;/code&gt; installed on your phone, which
+in my case was already there.
+So, it turned out to be very easy for people who usually install Custom ROMs on
+their Android devices.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Boot your phone into recovery mode.&lt;/li&gt;
+&lt;li&gt;Connect your phone to the computer via USB.
+&lt;ul&gt;
+&lt;li&gt;Check if your phone is connected properly using &lt;code&gt;adb devices&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;You will see a unique ID of your phone and the text &lt;code&gt;recovery&lt;/code&gt; after it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Now to backup your data use the &lt;code&gt;adb pull&lt;/code&gt; command:
+&lt;code&gt;adb pull &amp;lt;source-path&amp;gt; &amp;lt;target-path&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ adb pull sdcard/DCIM/Camera/ ~/backup
+pull: building file list...
+pull: sdcard/DCIM/Camera/IMG_20150916_174507.jpg -&amp;gt; /Users/&amp;lt;you&amp;gt;/backup/IMG_20150916_174507.jpg
+1 file pulled. 0 files skipped.
+7193 KB/s (1650876 bytes in 0.224s)&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I found this nice &lt;a href=&quot;https://www.droidviews.com/push-pull-files-android-using-adb-commands/&quot; title=&quot;adb pull&quot;&gt;article&lt;/a&gt;
+explaining the use case of &lt;code&gt;adb pull&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;p&gt;So, to sum it all up, if you can somehow install custom recovery on your phone,
+you can save all your shit.&lt;/p&gt;
+
+&lt;p&gt;May the force be with you!&lt;/p&gt;</content>
+</entry>
+</feed>

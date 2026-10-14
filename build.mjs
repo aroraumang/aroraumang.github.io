@@ -13,6 +13,9 @@
 // - APPS_LIVE switches the Apps section (/apps/ and /paisolog/) on or off.
 //   Off, those pages aren't built, their old output is removed, and the nav
 //   and footer stop linking to them.
+// - Blog posts are fragments under _src/blog/ with a `date:` line. The build
+//   adds the date above each post, fills {{BLOG_POSTS}} on /blog/ with the
+//   list, newest first, and writes the Atom feed at blog/atom.xml.
 //
 // No dependencies. The only client-side JavaScript is a page's own `script:`
 // file (dog.js on the home page), allowed by that page's CSP and nothing else.
@@ -58,6 +61,7 @@ const fill = (html) =>
     .replace(/\{\{SUPPORT_EMAIL\}\}/g, SUPPORT_EMAIL);
 
 const MAIN_NAV = [
+  ["/blog/", "Blog"],
   ...(APPS_LIVE ? [["/apps/", "Apps"]] : []),
   ["https://github.com/aroraumang", "GitHub"],
   ["https://www.linkedin.com/in/meumangarora", "LinkedIn"],
@@ -124,6 +128,7 @@ function layout({ title, description, urlPath, body, width, script }) {
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 ${urlPath === "/404" ? "" : `<link rel="canonical" href="${SITE_URL}${urlPath}">\n`}<link rel="icon" href="${theme.icon}">
+<link rel="alternate" type="application/atom+xml" title="Umang Arora's blog" href="/blog/atom.xml">
 <link rel="stylesheet" href="/style.css?v=${cssVersion}">
 ${script ? `<script src="/${script}?v=${fileVersion(script)}" defer></script>\n` : ""}</head>
 <body>
@@ -154,6 +159,11 @@ ${APPS_LIVE ? `<div>
 <a href="/paisolog/support/">PaisoLog support</a>
 </div>
 ` : ""}<div>
+<p>Blog</p>
+<a href="/blog/">All posts</a>
+<a href="/blog/atom.xml">Feed</a>
+</div>
+<div>
 <p>Elsewhere</p>
 <a href="https://github.com/aroraumang">GitHub</a>
 <a href="https://www.linkedin.com/in/meumangarora">LinkedIn</a>
@@ -240,8 +250,8 @@ const pages = walk(path.join(root, "_src"))
     const parts = name === "index" ? rel : [...rel, name];
     const urlPath =
       name === "404" ? "/404" : "/" + parts.map((p) => `${p}/`).join("");
-    const { title, description, width, script, body } = readFragment(file);
-    return { title, description, width, script, urlPath, body: fill(body) };
+    const { title, description, width, script, date, body } = readFragment(file);
+    return { title, description, width, script, date, urlPath, body: fill(body) };
   })
   .filter((page) => APPS_LIVE || !APP_SECTIONS.includes(page.urlPath.split("/")[1]));
 if (APPS_LIVE) {
@@ -251,6 +261,30 @@ if (APPS_LIVE) {
     fs.rmSync(path.join(root, dir), { recursive: true, force: true });
   }
 }
+
+const posts = pages
+  .filter((p) => p.date && p.urlPath.startsWith("/blog/"))
+  .sort((a, b) => b.date.localeCompare(a.date));
+const postDate = (p) =>
+  `<time datetime="${p.date}">${formatDate(p.date)}</time>`;
+for (const post of posts) {
+  // The feed shows the title itself, so its copy of the post skips the <h1>.
+  post.content = post.body.replace(/^\s*<h1>[\s\S]*?<\/h1>\s*/, "");
+  post.body = `<p class="eyebrow">${postDate(post)}</p>\n${post.body}`;
+}
+const blogIndex = pages.find((p) => p.urlPath === "/blog/");
+blogIndex.body = blogIndex.body.replace(
+  "{{BLOG_POSTS}}",
+  `<ol class="post-list">\n${posts
+    .map(
+      (p) => `<li>
+<a href="${p.urlPath}">${escapeHtml(p.title)}</a>
+<p>${escapeHtml(p.description)}</p>
+${postDate(p)}
+</li>`
+    )
+    .join("\n")}\n</ol>`
+);
 
 for (const page of pages) {
   const out =
@@ -273,6 +307,34 @@ fs.writeFileSync(
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls}
 </urlset>
+`
+);
+
+// Feed readers resolve the posts' root-relative links against xml:base.
+const feedEntries = posts
+  .map(
+    (p) => `<entry>
+<title>${escapeHtml(p.title)}</title>
+<link href="${SITE_URL}${p.urlPath}"/>
+<id>${SITE_URL}${p.urlPath}</id>
+<updated>${p.date}T00:00:00Z</updated>
+<summary>${escapeHtml(p.description)}</summary>
+<content type="html">${escapeHtml(p.content.trim())}</content>
+</entry>`
+  )
+  .join("\n");
+fs.writeFileSync(
+  path.join(root, "blog", "atom.xml"),
+  `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="${SITE_URL}/">
+<title>Umang Arora's blog</title>
+<link href="${SITE_URL}/blog/"/>
+<link rel="self" href="${SITE_URL}/blog/atom.xml"/>
+<id>${SITE_URL}/blog/</id>
+<updated>${posts[0].date}T00:00:00Z</updated>
+<author><name>Umang Arora</name></author>
+${feedEntries}
+</feed>
 `
 );
 
