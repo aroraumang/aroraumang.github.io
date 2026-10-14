@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" class="theme-site">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f3f0e9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e0c0a" media="(prefers-color-scheme: dark)">
+<title>Letting an AI agent drive my iOS simulator, without handing it my Mac | Umang Arora</title>
+<meta name="description" content="I build my app on Linux, but the iOS simulator only runs on a Mac. Here's how my coding agent now launches, taps and screenshots the app on the Mac over SSH, with a key that can only run a handful of simulator commands.">
+<link rel="canonical" href="https://umangarora.com/blog/letting-an-ai-agent-drive-my-ios-simulator/">
+<link rel="icon" href="/favicon.svg">
+<link rel="alternate" type="application/atom+xml" title="Umang Arora's blog" href="/blog/atom.xml">
+<link rel="stylesheet" href="/style.css?v=313e9103">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="top">
+<header class="site-header">
+<div class="wrap">
+<a class="logo" href="/" aria-label="Umang Arora, home"><span class="logo-mark" aria-hidden="true">UA</span><span class="logo-name">Umang Arora</span></a>
+<nav class="mainnav" aria-label="Main"><a href="/blog/" aria-current="true">Blog</a><a href="/apps/">Apps</a><a href="https://github.com/aroraumang" class="external">GitHub</a><a href="https://www.linkedin.com/in/meumangarora" class="external">LinkedIn</a><!--email_off--><a href="mailto:hi@umangarora.com">Say hi</a><!--/email_off--></nav>
+</div>
+</header>
+</div>
+<main id="content" class="wrap prose">
+<p class="eyebrow"><time datetime="2026-10-14">14 October 2026</time></p>
+<h1>Letting an AI agent drive my iOS simulator, without handing it my Mac</h1>
+
+<p class="lead">I write <a href="/paisolog/">PaisoLog</a> on a Linux machine. The iOS simulator only runs on macOS. Here's how my AI coding agent now checks its own changes on a Mac across the room, and why its SSH key can do almost nothing else.</p>
+
+<h2 id="the-problem">The problem</h2>
+
+<p>PaisoLog is a React Native (Expo) app. On Android, testing from Linux is easy: an emulator runs right here, and the agent can install, tap and screenshot it.</p>
+
+<p>My agent is <a href="https://claude.com/product/claude-code">Claude Code</a>, which writes a good part of PaisoLog these days. Nothing below depends on it, though: any agent that can run shell commands and use MCP tools can do the same.</p>
+
+<p>iOS is the awkward one. The simulator ships with Xcode, Xcode only runs on macOS, and there's no Linux equivalent. I have a Mac on the same Wi-Fi, so the question became: can the agent on Linux drive the simulator on the Mac?</p>
+
+<p>It can. None of the pieces are new, but putting them together took a few steps.</p>
+
+<pre><code>Linux                           Mac
+agent ─── SSH ────────────────► MCP server → simctl/idb → Simulator
+Metro ◄── tunnel :8081 ──────── PaisoLog (debug build)</code></pre>
+
+<h2 id="driving">1. Driving the simulator over SSH</h2>
+
+<p>Apple's <code>xcrun simctl</code> boots simulators, launches apps and takes screenshots, but it can't tap or type. For that I used <a href="https://fbidb.io/">idb</a>, which can also list every element on screen with its label and position, so the agent taps "Add transaction" by name instead of guessing pixels.</p>
+
+<p>Claude Code, like most coding agents, talks to tools over <a href="https://modelcontextprotocol.io/">MCP</a>, and there's already an open-source MCP server for the simulator, <code>ios-simulator-mcp</code>. MCP servers usually speak over stdin and stdout, and SSH carries those across the network unchanged. So the whole connection is one entry in the project's MCP config:</p>
+
+<pre><code>{
+  "mcpServers": {
+    "ios-sim": { "command": "ssh", "args": ["mac", "sim-mcp"] }
+  }
+}</code></pre>
+
+<p>No port to open, and SSH keys handle authentication. (<code>sim-mcp</code> will make sense in section 4.)</p>
+
+<h2 id="tunnel">2. Getting my code onto the Mac without copying it</h2>
+
+<p>The code lives on Linux, and I didn't want to sync it to the Mac every time something changed. React Native apps load their JavaScript from a bundler called Metro, so Metro can run on Linux. The catch: the debug build installed on the simulator looks for Metro at <code>localhost:8081</code> <em>on the Mac</em>.</p>
+
+<p>Android developers already know the fix. <code>adb reverse tcp:8081 tcp:8081</code> makes the phone's <code>localhost:8081</code> point at your computer. SSH can do the same for the Mac:</p>
+
+<pre><code>ssh -N -R 8081:localhost:8081 mac</code></pre>
+
+<p>Now the Mac's <code>localhost:8081</code> is Metro on Linux. Edit a file here, relaunch the app there, and it runs the new code.</p>
+
+<h2 id="one-command">3. One command to start, one to stop</h2>
+
+<p>Starting Metro, opening the tunnel, booting the right simulator and relaunching the app is four steps, so it became one script. Every step is skipped if it's already done, so it's safe to rerun after each change:</p>
+
+<pre><code>$ scripts/ios-remote.sh
+✅ Metro already running on :8081
+🔌 Opening reverse tunnel to mac...
+📱 Booting simulator ...
+🔄 Relaunching com.umangarora.paisolog...
+✨ Launched. The first bundle takes ~20s.
+
+$ scripts/ios-remote.sh stop-tunnel
+🔌 Tunnel stopped
+📴 Simulator ... shut down</code></pre>
+
+<p>Two details mattered more than I expected:</p>
+
+<ul>
+<li><strong>The tunnel blocks the Mac.</strong> While it's open it holds port 8081 on the Mac, so Metro can't start there when I sit down to work on the Mac itself. The agent closes the tunnel after every test, and a Claude Code hook closes it when the session ends, in case it forgets.</li>
+<li><strong>Clean up only what you started.</strong> The script remembers whether it booted the simulator. If it did, stopping shuts it down again; if I'd already booted it on the Mac, it's left alone. It also refuses to run if something other than the tunnel holds the Mac's port 8081, because then the app would quietly load the Mac's copy of the code instead.</li>
+</ul>
+
+<h2 id="taking-access-back">4. Taking most of the access back</h2>
+
+<p>At this point everything worked, and the agent had a full shell on my Mac. That's more than it needs: my files, my browser profiles, anything my user can touch. If the Linux machine were ever compromised, so would the Mac be.</p>
+
+<p>OpenSSH has had a fix for this for decades, and you've probably used it without noticing. When you <code>git push</code> to GitHub over SSH, your key doesn't get a shell; it gets a program that only speaks git. That's a <em>forced command</em> in <code>~/.ssh/authorized_keys</code>:</p>
+
+<pre><code>restrict,port-forwarding,permitlisten="localhost:8081",permitopen="localhost:9",command="/Users/you/bin/paisolog-gate" ssh-ed25519 AAAA...</code></pre>
+
+<ul>
+<li><code>restrict</code> turns off everything: shells, terminals, agent and port forwarding.</li>
+<li><code>port-forwarding</code> with <code>permitlisten</code> allows exactly one reverse tunnel, on <code>localhost:8081</code>. <code>permitopen</code> points local forwards at a port nothing listens on, so they're useless.</li>
+<li><code>command</code> means whatever the key asks to run, the Mac runs the gate script instead and hands it the request.</li>
+</ul>
+
+<p>The gate is a short bash script with a fixed list of verbs, and anything else is refused. Trimmed down:</p>
+
+<pre><code>CMD="${SSH_ORIGINAL_COMMAND:-}"
+echo "$(date '+%F %T') ${CMD:0:300}" &gt;&gt; "$LOG"
+VERB="${CMD%% *}"
+
+case "$VERB" in
+  sim-mcp)      exec npx -y "ios-simulator-mcp@2.1.0" ;;
+  metro-status) curl -s -m 3 "localhost:8081/status" ;;
+  booted)       xcrun simctl list devices booted | grep -oE "$UDID_PATTERN" ;;
+  boot)         U=$(udid_arg); xcrun simctl boot "$U" &amp;&amp; xcrun simctl bootstatus "$U" ;;
+  launch)       U=$(udid_arg); xcrun simctl launch "$U" "$BUNDLE_ID" ;;
+  screenshot)   ... ;;   # PNG on stdout
+  db-query)     ... ;;   # read-only SQL, see below
+  *)            deny "'${VERB:-&lt;interactive shell&gt;}' is not allowed" ;;
+esac</code></pre>
+
+<p>A few choices in there:</p>
+
+<ul>
+<li><strong>Arguments are checked.</strong> Simulator IDs must match the UUID format, so <code>boot ../../etc</code> goes nowhere.</li>
+<li><strong>The app's database is read-only.</strong> <code>db-query</code> opens it with <code>sqlite3 -safe -readonly</code>, which blocks writes, <code>ATTACH</code> and sqlite's own <code>.shell</code> command. Dot-commands are refused outright.</li>
+<li><strong>The MCP server is pinned.</strong> <code>npx -y ios-simulator-mcp</code> would run whatever version npm has today. Pinning it means a new release can't change what runs on my Mac without me noticing.</li>
+<li><strong>Every call is logged</strong> on the Mac.</li>
+<li><strong>The gate can't change itself.</strong> Updating it means copying a new version on the Mac by hand, which is the point.</li>
+</ul>
+
+<p>Claude wrote the gate and then tested it by trying to get past it, using a throwaway key first so a mistake couldn't lock me out. This is what the agent's key gets now:</p>
+
+<pre><code>$ ssh mac id
+paisolog-gate: 'id' is not allowed
+$ ssh mac 'booted; id'
+paisolog-gate: 'booted;' is not allowed
+$ ssh mac
+paisolog-gate: '&lt;interactive shell&gt;' is not allowed
+$ scp mac:.zshrc .
+scp: Connection closed
+$ ssh -N -R 2222:localhost:22 mac
+Error: remote port forwarding failed for listen port 2222
+$ ssh mac "db-query ATTACH '/tmp/x.db' AS x;"
+line 0: cannot run ATTACH in safe mode</code></pre>
+
+<p>Meanwhile launching the app, screenshots, read-only queries and the MCP server all still work.</p>
+
+<h2 id="the-rest">5. Closing the other door</h2>
+
+<p>The gate only covers that one key. With Remote Login turned on, the Mac also accepted passwords over SSH, from any device on the network. Two lines turn that off:</p>
+
+<pre><code>printf 'PasswordAuthentication no\nKbdInteractiveAuthentication no\n' | sudo tee /etc/ssh/sshd_config.d/100-keys-only.conf
+sudo launchctl kickstart -k system/com.openssh.sshd</code></pre>
+
+<pre><code>$ ssh -o PubkeyAuthentication=no mac
+you@mac: Permission denied (publickey).</code></pre>
+
+<p>Last, I reserved both machines' IP addresses on the router, so the setup survives a reboot. One catch: macOS gives each Wi-Fi network a "private" MAC address, which can rotate. Set it to <strong>Fixed</strong> for your home network, or the reservation stops matching.</p>
+
+<h2 id="gotchas">Things the agent tripped over</h2>
+
+<ul>
+<li><strong>Fast typing drops keys.</strong> idb sends a whole string in one burst. In PaisoLog's search, the first letter starts work on ~28,000 transactions, and the remaining keystrokes vanished: "fuel" came out as "F". Typing one character at a time works.</li>
+<li><strong>The first letter gets capitalised</strong>, like on a real iPhone. Worth remembering before you assert on text.</li>
+<li><strong>Edge swipes don't go back.</strong> A swipe from the screen's edge didn't trigger the iOS back gesture; tapping the back button did.</li>
+<li><strong>Know which build you have.</strong> My simulator had a plain debug build, not an Expo development client, so dev-client links did nothing. That's why the tunnel exists at all.</li>
+</ul>
+
+<h2 id="new">Is any of this new?</h2>
+
+<p>Not really. Teams have shared Macs for iOS work for years, <code>adb reverse</code> is the same trick as the tunnel, forced commands are how Git hosts work, and key-only SSH is the first thing anyone does to a server. Open-source tools already let AI agents drive the simulator.</p>
+
+<p>What felt worth writing down is the combination. It's tempting to hand an agent a shell and move on. A shell is the easy path, but an agent only needs a short list of verbs, and an afternoon of setup buys that. Next time it runs a command on my Mac, I know exactly which ones it can be.</p>
+</main>
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-brand">
+<a class="logo" href="/"><span class="logo-mark" aria-hidden="true">UA</span><span>Umang Arora</span></a>
+<p>No cookies, analytics or trackers.</p>
+</div>
+<nav class="footer-cols" aria-label="Footer">
+<div>
+<p>Apps</p>
+<a href="/apps/">All apps</a>
+<a href="/paisolog/">PaisoLog</a>
+<a href="/paisolog/privacy/">PaisoLog privacy</a>
+<a href="/paisolog/support/">PaisoLog support</a>
+</div>
+<div>
+<p>Blog</p>
+<a href="/blog/">All posts</a>
+<a href="/blog/atom.xml">Feed</a>
+</div>
+<div>
+<p>Elsewhere</p>
+<a href="https://github.com/aroraumang">GitHub</a>
+<a href="https://www.linkedin.com/in/meumangarora">LinkedIn</a>
+<!--email_off--><a href="mailto:hi@umangarora.com">hi@umangarora.com</a><!--/email_off-->
+</div>
+</nav>
+<p class="copyright">&copy; 2026 Umang Arora</p>
+</div>
+</footer>
+</body>
+</html>

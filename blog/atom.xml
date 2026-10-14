@@ -4,8 +4,161 @@
 <link href="https://umangarora.com/blog/"/>
 <link rel="self" href="https://umangarora.com/blog/atom.xml"/>
 <id>https://umangarora.com/blog/</id>
-<updated>2015-09-13T00:00:00Z</updated>
+<updated>2026-10-14T00:00:00Z</updated>
 <author><name>Umang Arora</name></author>
+<entry>
+<title>Letting an AI agent drive my iOS simulator, without handing it my Mac</title>
+<link href="https://umangarora.com/blog/letting-an-ai-agent-drive-my-ios-simulator/"/>
+<id>https://umangarora.com/blog/letting-an-ai-agent-drive-my-ios-simulator/</id>
+<updated>2026-10-14T00:00:00Z</updated>
+<summary>I build my app on Linux, but the iOS simulator only runs on a Mac. Here's how my coding agent now launches, taps and screenshots the app on the Mac over SSH, with a key that can only run a handful of simulator commands.</summary>
+<content type="html">&lt;p class=&quot;lead&quot;&gt;I write &lt;a href=&quot;/paisolog/&quot;&gt;PaisoLog&lt;/a&gt; on a Linux machine. The iOS simulator only runs on macOS. Here's how my AI coding agent now checks its own changes on a Mac across the room, and why its SSH key can do almost nothing else.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-problem&quot;&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;PaisoLog is a React Native (Expo) app. On Android, testing from Linux is easy: an emulator runs right here, and the agent can install, tap and screenshot it.&lt;/p&gt;
+
+&lt;p&gt;My agent is &lt;a href=&quot;https://claude.com/product/claude-code&quot;&gt;Claude Code&lt;/a&gt;, which writes a good part of PaisoLog these days. Nothing below depends on it, though: any agent that can run shell commands and use MCP tools can do the same.&lt;/p&gt;
+
+&lt;p&gt;iOS is the awkward one. The simulator ships with Xcode, Xcode only runs on macOS, and there's no Linux equivalent. I have a Mac on the same Wi-Fi, so the question became: can the agent on Linux drive the simulator on the Mac?&lt;/p&gt;
+
+&lt;p&gt;It can. None of the pieces are new, but putting them together took a few steps.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Linux                           Mac
+agent ─── SSH ────────────────► MCP server → simctl/idb → Simulator
+Metro ◄── tunnel :8081 ──────── PaisoLog (debug build)&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;driving&quot;&gt;1. Driving the simulator over SSH&lt;/h2&gt;
+
+&lt;p&gt;Apple's &lt;code&gt;xcrun simctl&lt;/code&gt; boots simulators, launches apps and takes screenshots, but it can't tap or type. For that I used &lt;a href=&quot;https://fbidb.io/&quot;&gt;idb&lt;/a&gt;, which can also list every element on screen with its label and position, so the agent taps &quot;Add transaction&quot; by name instead of guessing pixels.&lt;/p&gt;
+
+&lt;p&gt;Claude Code, like most coding agents, talks to tools over &lt;a href=&quot;https://modelcontextprotocol.io/&quot;&gt;MCP&lt;/a&gt;, and there's already an open-source MCP server for the simulator, &lt;code&gt;ios-simulator-mcp&lt;/code&gt;. MCP servers usually speak over stdin and stdout, and SSH carries those across the network unchanged. So the whole connection is one entry in the project's MCP config:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+  &quot;mcpServers&quot;: {
+    &quot;ios-sim&quot;: { &quot;command&quot;: &quot;ssh&quot;, &quot;args&quot;: [&quot;mac&quot;, &quot;sim-mcp&quot;] }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;No port to open, and SSH keys handle authentication. (&lt;code&gt;sim-mcp&lt;/code&gt; will make sense in section 4.)&lt;/p&gt;
+
+&lt;h2 id=&quot;tunnel&quot;&gt;2. Getting my code onto the Mac without copying it&lt;/h2&gt;
+
+&lt;p&gt;The code lives on Linux, and I didn't want to sync it to the Mac every time something changed. React Native apps load their JavaScript from a bundler called Metro, so Metro can run on Linux. The catch: the debug build installed on the simulator looks for Metro at &lt;code&gt;localhost:8081&lt;/code&gt; &lt;em&gt;on the Mac&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Android developers already know the fix. &lt;code&gt;adb reverse tcp:8081 tcp:8081&lt;/code&gt; makes the phone's &lt;code&gt;localhost:8081&lt;/code&gt; point at your computer. SSH can do the same for the Mac:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh -N -R 8081:localhost:8081 mac&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now the Mac's &lt;code&gt;localhost:8081&lt;/code&gt; is Metro on Linux. Edit a file here, relaunch the app there, and it runs the new code.&lt;/p&gt;
+
+&lt;h2 id=&quot;one-command&quot;&gt;3. One command to start, one to stop&lt;/h2&gt;
+
+&lt;p&gt;Starting Metro, opening the tunnel, booting the right simulator and relaunching the app is four steps, so it became one script. Every step is skipped if it's already done, so it's safe to rerun after each change:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ scripts/ios-remote.sh
+✅ Metro already running on :8081
+🔌 Opening reverse tunnel to mac...
+📱 Booting simulator ...
+🔄 Relaunching com.umangarora.paisolog...
+✨ Launched. The first bundle takes ~20s.
+
+$ scripts/ios-remote.sh stop-tunnel
+🔌 Tunnel stopped
+📴 Simulator ... shut down&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Two details mattered more than I expected:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;The tunnel blocks the Mac.&lt;/strong&gt; While it's open it holds port 8081 on the Mac, so Metro can't start there when I sit down to work on the Mac itself. The agent closes the tunnel after every test, and a Claude Code hook closes it when the session ends, in case it forgets.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Clean up only what you started.&lt;/strong&gt; The script remembers whether it booted the simulator. If it did, stopping shuts it down again; if I'd already booted it on the Mac, it's left alone. It also refuses to run if something other than the tunnel holds the Mac's port 8081, because then the app would quietly load the Mac's copy of the code instead.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;taking-access-back&quot;&gt;4. Taking most of the access back&lt;/h2&gt;
+
+&lt;p&gt;At this point everything worked, and the agent had a full shell on my Mac. That's more than it needs: my files, my browser profiles, anything my user can touch. If the Linux machine were ever compromised, so would the Mac be.&lt;/p&gt;
+
+&lt;p&gt;OpenSSH has had a fix for this for decades, and you've probably used it without noticing. When you &lt;code&gt;git push&lt;/code&gt; to GitHub over SSH, your key doesn't get a shell; it gets a program that only speaks git. That's a &lt;em&gt;forced command&lt;/em&gt; in &lt;code&gt;~/.ssh/authorized_keys&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;restrict,port-forwarding,permitlisten=&quot;localhost:8081&quot;,permitopen=&quot;localhost:9&quot;,command=&quot;/Users/you/bin/paisolog-gate&quot; ssh-ed25519 AAAA...&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;restrict&lt;/code&gt; turns off everything: shells, terminals, agent and port forwarding.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;port-forwarding&lt;/code&gt; with &lt;code&gt;permitlisten&lt;/code&gt; allows exactly one reverse tunnel, on &lt;code&gt;localhost:8081&lt;/code&gt;. &lt;code&gt;permitopen&lt;/code&gt; points local forwards at a port nothing listens on, so they're useless.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;command&lt;/code&gt; means whatever the key asks to run, the Mac runs the gate script instead and hands it the request.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The gate is a short bash script with a fixed list of verbs, and anything else is refused. Trimmed down:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;CMD=&quot;${SSH_ORIGINAL_COMMAND:-}&quot;
+echo &quot;$(date '+%F %T') ${CMD:0:300}&quot; &amp;gt;&amp;gt; &quot;$LOG&quot;
+VERB=&quot;${CMD%% *}&quot;
+
+case &quot;$VERB&quot; in
+  sim-mcp)      exec npx -y &quot;ios-simulator-mcp@2.1.0&quot; ;;
+  metro-status) curl -s -m 3 &quot;localhost:8081/status&quot; ;;
+  booted)       xcrun simctl list devices booted | grep -oE &quot;$UDID_PATTERN&quot; ;;
+  boot)         U=$(udid_arg); xcrun simctl boot &quot;$U&quot; &amp;amp;&amp;amp; xcrun simctl bootstatus &quot;$U&quot; ;;
+  launch)       U=$(udid_arg); xcrun simctl launch &quot;$U&quot; &quot;$BUNDLE_ID&quot; ;;
+  screenshot)   ... ;;   # PNG on stdout
+  db-query)     ... ;;   # read-only SQL, see below
+  *)            deny &quot;'${VERB:-&amp;lt;interactive shell&amp;gt;}' is not allowed&quot; ;;
+esac&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A few choices in there:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Arguments are checked.&lt;/strong&gt; Simulator IDs must match the UUID format, so &lt;code&gt;boot ../../etc&lt;/code&gt; goes nowhere.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The app's database is read-only.&lt;/strong&gt; &lt;code&gt;db-query&lt;/code&gt; opens it with &lt;code&gt;sqlite3 -safe -readonly&lt;/code&gt;, which blocks writes, &lt;code&gt;ATTACH&lt;/code&gt; and sqlite's own &lt;code&gt;.shell&lt;/code&gt; command. Dot-commands are refused outright.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The MCP server is pinned.&lt;/strong&gt; &lt;code&gt;npx -y ios-simulator-mcp&lt;/code&gt; would run whatever version npm has today. Pinning it means a new release can't change what runs on my Mac without me noticing.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Every call is logged&lt;/strong&gt; on the Mac.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The gate can't change itself.&lt;/strong&gt; Updating it means copying a new version on the Mac by hand, which is the point.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Claude wrote the gate and then tested it by trying to get past it, using a throwaway key first so a mistake couldn't lock me out. This is what the agent's key gets now:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ssh mac id
+paisolog-gate: 'id' is not allowed
+$ ssh mac 'booted; id'
+paisolog-gate: 'booted;' is not allowed
+$ ssh mac
+paisolog-gate: '&amp;lt;interactive shell&amp;gt;' is not allowed
+$ scp mac:.zshrc .
+scp: Connection closed
+$ ssh -N -R 2222:localhost:22 mac
+Error: remote port forwarding failed for listen port 2222
+$ ssh mac &quot;db-query ATTACH '/tmp/x.db' AS x;&quot;
+line 0: cannot run ATTACH in safe mode&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Meanwhile launching the app, screenshots, read-only queries and the MCP server all still work.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-rest&quot;&gt;5. Closing the other door&lt;/h2&gt;
+
+&lt;p&gt;The gate only covers that one key. With Remote Login turned on, the Mac also accepted passwords over SSH, from any device on the network. Two lines turn that off:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;printf 'PasswordAuthentication no\nKbdInteractiveAuthentication no\n' | sudo tee /etc/ssh/sshd_config.d/100-keys-only.conf
+sudo launchctl kickstart -k system/com.openssh.sshd&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ssh -o PubkeyAuthentication=no mac
+you@mac: Permission denied (publickey).&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Last, I reserved both machines' IP addresses on the router, so the setup survives a reboot. One catch: macOS gives each Wi-Fi network a &quot;private&quot; MAC address, which can rotate. Set it to &lt;strong&gt;Fixed&lt;/strong&gt; for your home network, or the reservation stops matching.&lt;/p&gt;
+
+&lt;h2 id=&quot;gotchas&quot;&gt;Things the agent tripped over&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fast typing drops keys.&lt;/strong&gt; idb sends a whole string in one burst. In PaisoLog's search, the first letter starts work on ~28,000 transactions, and the remaining keystrokes vanished: &quot;fuel&quot; came out as &quot;F&quot;. Typing one character at a time works.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The first letter gets capitalised&lt;/strong&gt;, like on a real iPhone. Worth remembering before you assert on text.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Edge swipes don't go back.&lt;/strong&gt; A swipe from the screen's edge didn't trigger the iOS back gesture; tapping the back button did.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Know which build you have.&lt;/strong&gt; My simulator had a plain debug build, not an Expo development client, so dev-client links did nothing. That's why the tunnel exists at all.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;new&quot;&gt;Is any of this new?&lt;/h2&gt;
+
+&lt;p&gt;Not really. Teams have shared Macs for iOS work for years, &lt;code&gt;adb reverse&lt;/code&gt; is the same trick as the tunnel, forced commands are how Git hosts work, and key-only SSH is the first thing anyone does to a server. Open-source tools already let AI agents drive the simulator.&lt;/p&gt;
+
+&lt;p&gt;What felt worth writing down is the combination. It's tempting to hand an agent a shell and move on. A shell is the easy path, but an agent only needs a short list of verbs, and an afternoon of setup buys that. Next time it runs a command on my Mac, I know exactly which ones it can be.&lt;/p&gt;</content>
+</entry>
 <entry>
 <title>How to recover data from an android device with a broken display</title>
 <link href="https://umangarora.com/blog/2015/09/13/recover-data-from-android-device-with-a-broken-display/"/>
