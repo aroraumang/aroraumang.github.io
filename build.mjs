@@ -78,7 +78,7 @@ const PAISOLOG_NAV = [
 // site theme.
 const THEMES = {
   site: { light: "#f3f0e9", dark: "#0e0c0a", icon: "/favicon.svg" },
-  paisolog: { light: "#FBF8F3", dark: "#17110D", icon: "/assets/paisolog-icon.png" },
+  paisolog: { light: "#F4F4F5", dark: "#0E0E10", icon: "/assets/paisolog-icon.png" },
 };
 
 const navLinks = (items, urlPath, { sections = false } = {}) =>

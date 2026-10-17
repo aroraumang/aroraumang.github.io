@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
    Themes. The site uses warm paper and ink with a sunset gradient accent. Pages under
    /paisolog/ get html.theme-paisolog, which swaps in the app's own palette
-   from PaisoLog's constants/theme.ts (dark brown ink on warm paper).
+   from PaisoLog's constants/theme.ts (graphite ink on soft neutral grey).
    ------------------------------------------------------------------------ */
 
 :root {
@@ -65,48 +65,51 @@
 }
 
 :root.theme-paisolog {
-  --bg: #fbf8f3;
-  --surface: #fffdf9;
-  --surface-muted: #f3ede3;
-  --border: #e6dccd;
-  --border-strong: #cdbfab;
-  --text: #2b1d14;
-  --text-2: #6f5d4e;
-  --brand: #4a2f1f;
-  --brand-soft: #efe6d8;
-  --on-brand: #fbf8f3;
-  --link: #7a4426;
-  --success: #4f7942;
-  --danger: #b5462f;
-  --info: #3e6c78;
-  --warning: #b7791f;
-  --warning-soft: #f7edd9;
-  --logo-bg: #4a2f1f;
-  --header-bg: rgb(251 248 243 / 80%);
-  --shadow: 0 1px 2px rgb(43 29 20 / 6%), 0 12px 32px -12px rgb(43 29 20 / 18%);
-  --display: ui-rounded, "SF Pro Rounded", var(--font);
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --surface-muted: #ebebee;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --text: #18181b;
+  --text-2: #52525b;
+  --brand: #18181b;
+  --brand-soft: #dedee2;
+  --on-brand: #ffffff;
+  /* Links stay ink like the app: hue only carries meaning there. */
+  --link: #18181b;
+  --success: #1f7a4c;
+  --danger: #a8322a;
+  --info: #2f6198;
+  --warning: #b45309;
+  --warning-soft: #fbf0dd;
+  --brand-gradient: linear-gradient(135deg, #27272a, #52525b);
+  --logo-bg: #18181b;
+  --header-bg: rgb(244 244 245 / 80%);
+  --shadow: 0 1px 2px rgb(24 24 27 / 6%), 0 12px 32px -12px rgb(24 24 27 / 18%);
+  --display: var(--font);
 }
 
 @media (prefers-color-scheme: dark) {
   :root.theme-paisolog {
-    --bg: #17110d;
-    --surface: #211812;
-    --surface-muted: #2b2018;
-    --border: #33271e;
-    --border-strong: #4a3a2d;
-    --text: #f3ebdd;
-    --text-2: #bfae9c;
-    --brand: #e2c9a6;
-    --brand-soft: #33261c;
-    --on-brand: #2b1d14;
-    --link: #e8c597;
-    --success: #8db580;
-    --danger: #e07a5f;
-    --info: #86b3be;
-    --warning: #e0b04f;
-    --warning-soft: #33281a;
-    --logo-bg: #4a3a2d;
-    --header-bg: rgb(23 17 13 / 80%);
+    --bg: #0e0e10;
+    --surface: #18181b;
+    --surface-muted: #222226;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --text: #f4f4f5;
+    --text-2: #b4b4bc;
+    --brand: #f4f4f5;
+    --brand-soft: #303035;
+    --on-brand: #18181b;
+    --link: #f4f4f5;
+    --success: #62c795;
+    --danger: #e8877c;
+    --info: #86acdb;
+    --warning: #f0b43c;
+    --warning-soft: #2d2310;
+    --brand-gradient: linear-gradient(135deg, #fafafa, #d4d4d8);
+    --logo-bg: #18181b;
+    --header-bg: rgb(14 14 16 / 80%);
     --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 16px 40px -16px rgb(0 0 0 / 60%);
   }
 }
@@ -1175,8 +1178,8 @@ strong {
   margin: 0 auto;
   padding: 0.7rem;
   border-radius: 2.75rem;
-  background: #2b1d14;
-  box-shadow: 0 30px 60px -20px rgb(43 29 20 / 45%), inset 0 0 0 2px #4a3a2d;
+  background: #18181b;
+  box-shadow: 0 30px 60px -20px rgb(24 24 27 / 45%), inset 0 0 0 2px #3f3f46;
   transform: rotate(2deg);
 }
 
@@ -1350,17 +1353,18 @@ strong {
   color: var(--text-2);
 }
 
-/* A full-bleed brown band, like the app icon inverted. */
+/* A full-bleed ink band, like the app icon. In dark mode it takes the
+   app's graphite sheen so it still lifts off the near-black page. */
 .band {
   margin: 5rem calc(50% - 50vw) 0;
   padding: 4rem 0;
-  background: #4a2f1f;
-  color: #efe6d8;
+  background: #18181b;
+  color: #e4e4e7;
 }
 
 @media (prefers-color-scheme: dark) {
   .band {
-    background: #2b2018;
+    background: linear-gradient(180deg, #27272a, #18181b);
   }
 }
 
@@ -1378,7 +1382,7 @@ strong {
 
 .band h2,
 .band h3 {
-  color: #fbf8f3;
+  color: #fafafa;
 }
 
 .promises {
@@ -1393,7 +1397,7 @@ strong {
 .promises li {
   margin: 0;
   padding-top: 1.25rem;
-  border-top: 1px solid rgb(239 230 216 / 25%);
+  border-top: 1px solid rgb(244 244 245 / 18%);
 }
 
 .promises h3 {
@@ -1402,13 +1406,19 @@ strong {
 
 .promises p {
   margin: 0;
-  color: #dccbb4;
+  color: #b4b4bc;
 }
 
 .button.light {
-  border-color: #efe6d8;
-  background: #efe6d8;
-  color: #2b1d14;
+  border-color: #f4f4f5;
+  background: #f4f4f5;
+  color: #18181b;
+}
+
+/* The app's main buttons are a soft graphite sheen, not a flat fill. */
+.theme-paisolog .button:not(.secondary, .light) {
+  border-color: transparent;
+  background: var(--brand-gradient);
 }
 
 .split {
